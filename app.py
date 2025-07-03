@@ -10,6 +10,9 @@ from langchain.schema import HumanMessage, SystemMessage
 from langfuse import get_client, observe
 import logging
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Initialize Langfuse
 langfuse = get_client()
 prompt_obj = langfuse.get_prompt("real_estate_content_generation", label="production")
@@ -17,18 +20,21 @@ prompt_template = prompt_obj.prompt  # or .content, depending on SDK version
 
 app = FastAPI()
 
+class QuestionAnswer(BaseModel):
+    question: str
+    answer: str
+
 class QuestionSection(BaseModel):
     section: str
-    questions: list[list[str]]  # List of [question, answer] pairs
+    questions: list[QuestionAnswer]
 
 class ContentRequest(BaseModel):
     agent_answers: list[QuestionSection]
 
-# Prompt template (reuse your enhanced prompt)
 
 # Initialize LangChain's OpenAI wrapper
 llm = ChatOpenAI(
-    openai_api_key="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",
+    openai_api_key="<openai api key>",
     model="gpt-3.5-turbo",
     temperature=0.7,
     max_tokens=1500
@@ -40,8 +46,8 @@ def build_prompt(agent_answers):
     prompt = prompt_template
     for section in agent_answers:
         prompt += f"\n## {section.section}\n"
-        for q, a in section.questions:
-            prompt += f"- {q}\n{a}\n"
+        for qa in section.questions:
+            prompt += f"- {qa.question}\n{qa.answer}\n"
     
     return prompt
 
@@ -57,7 +63,9 @@ def clean_json(text):
     text = re.sub(r',([ \t\r\n]*[}\]])', r'\1', text)
     
     cleaned_text = text.strip()
-    
+    # Try to add a closing brace if missing
+    if cleaned_text.count('{') > cleaned_text.count('}'):
+        cleaned_text += '}'
     return cleaned_text
 
 @observe

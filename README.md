@@ -107,51 +107,111 @@ prompt_template = prompt_obj.prompt
 Input Example:
 
 {
-    "agent_answers": [
+  "agent_answers": [
+    {
+      "section": "Location & Market Information",
+      "questions": [
         {
-            "section": "Location & Market Information",
-            "questions": [
-                ["What geographic area(s) do you primarily serve?", "Durham, Raleigh, Chapel Hill, Cary, Morrisville, Hillsborough and the surrounding areas in NC; and Philadelphia, PA and the surrounding areas."],
-                ["Is there a specific neighborhood or area where you have particular expertise?", "Downtown Durham"],
-                ["What are 3-5 unique selling points about your local market that buyers/sellers should know?", "1) Now is a great time to purchase a home due to sellers getting nervous about the economy and the days on market average is getting longer. 2) If you're looking to sell your home, having an experienced Realtor like myself is very important, along with pricing your home very well to sell in this market and top notch marketing to get your home in front of potential buyers. 3) Purchasing your own home is the number 1 investment anyone can make in America, because you are locking in your mortgage payment versus paying rent which goes up every year, you are building up equity with your monthly mortgage payments while having the home value increase over time, and if you have to move you could rent out."],
-                ["What types of properties are most common in your area?", "Single-family homes, condos, luxury estates, etc."]
-            ]
+          "question": "What geographic area(s) do you primarily serve?",
+          "answer": "Durham, Raleigh, Chapel Hill, Cary, Morrisville, Hillsborough and the surrounding areas in NC; and Philadelphia, PA and the surrounding areas."
         },
         {
-            "section": "Agent/Broker Specialization",
-            "questions": [
-                ["What property types do you specialize in?", "Residential, commercial, luxury, investment, etc."],
-                ["Do you focus on a particular transaction type?", "First-time buyers, relocations, downsizing, etc."],
-                ["What special certifications or designations do you hold?", "NAR, ABR, CNE"],
-                ["How many years of experience do you have in real estate?", "22 years"]
-            ]
+          "question": "Is there a specific neighborhood or area where you have particular expertise?",
+          "answer": "Downtown Durham"
         },
         {
-            "section": "Unique Value Proposition",
-            "questions": [
-                ["What makes your services different from other brokers in your area?", "Preventive defense strategies, personalized solutions, advanced technology, and selfless service."],
-                ["What specific problems do you solve for your clients?", "Anticipate and solve transaction challenges, provide expert guidance, and ensure smooth closings."],
-                ["What is your approach to client relationships?", "Building lasting relationships as a trusted advisor and friend."],
-                ["Do you have any specific systems or processes that benefit your clients?", "Proactive transaction management, advanced marketing, and technology-driven solutions."]
-            ]
+          "question": "What are 3-5 unique selling points about your local market that buyers/sellers should know?",
+          "answer": "1) Now is a great time to purchase a home due to sellers getting nervous about the economy and the days on market average is getting longer. 2) If you're looking to sell your home, having an experienced Realtor like myself is very important, along with pricing your home very well to sell in this market and top notch marketing to get your home in front of potential buyers. 3) Purchasing your own home is the number 1 investment anyone can make in America, because you are locking in your mortgage payment versus paying rent which goes up every year, you are building up equity with your monthly mortgage payments while having the home value increase over time, and if you have to move you could rent out."
         },
         {
-            "section": "Personal Brand Elements",
-            "questions": [
-                ["How would you describe your personal brand in 3-5 adjectives?", "Experienced, dedicated, proactive, trustworthy, client-focused."],
-                ["What tone best represents your communication style?", "Professional, friendly, direct."],
-                ["Do you have any personal interests or community involvement that shapes your business?", "Community volunteer, local events supporter."],
-                ["What client testimonials best represent the value you provide?", "Charles made the process seamless and stress-free!"]
-            ]
-        },
-        {
-            "section": "Business Goals",
-            "questions": [
-                ["What is your primary goal for your website?", "Lead generation, branding, information resource."],
-                ["What specific actions do you want visitors to take on your site?", "Contact me, sign up for property search, schedule a consultation."],
-                ["Which lead generation methods have worked best for you in the past?", "Referrals, online marketing, open houses."],
-                ["What types of clients are you most interested in attracting?", "Serious buyers and sellers in the Triangle and Philadelphia markets."]
-            ]
+          "question": "What types of properties are most common in your area?",
+          "answer": "Single-family homes, condos, luxury estates, etc."
         }
-    ]
+      ]
+    },
+    {
+      "section": "Agent/Broker Specialization",
+      "questions": [
+        {
+          "question": "What property types do you specialize in?",
+          "answer": "Residential, commercial, luxury, investment, etc."
+        },
+        {
+          "question": "Do you focus on a particular transaction type?",
+          "answer": "First-time buyers, relocations, downsizing, etc."
+        },
+        {
+          "question": "What special certifications or designations do you hold?",
+          "answer": "NAR, ABR, CNE"
+        },
+        {
+          "question": "How many years of experience do you have in real estate?",
+          "answer": "22 years"
+        }
+      ]
+    },
+    {
+      "section": "Unique Value Proposition",
+      "questions": [
+        {
+          "question": "What makes your services different from other brokers in your area?",
+          "answer": "Preventive defense strategies, personalized solutions, advanced technology, and selfless service."
+        },
+        {
+          "question": "What specific problems do you solve for your clients?",
+          "answer": "Anticipate and solve transaction challenges, provide expert guidance, and ensure smooth closings."
+        },
+        {
+          "question": "What is your approach to client relationships?",
+          "answer": "Building lasting relationships as a trusted advisor and friend."
+        },
+        {
+          "question": "Do you have any specific systems or processes that benefit your clients?",
+          "answer": "Proactive transaction management, advanced marketing, and technology-driven solutions."
+        }
+      ]
+    },
+    {
+      "section": "Personal Brand Elements",
+      "questions": [
+        {
+          "question": "How would you describe your personal brand in 3-5 adjectives?",
+          "answer": "Experienced, dedicated, proactive, trustworthy, client-focused."
+        },
+        {
+          "question": "What tone best represents your communication style?",
+          "answer": "Professional, friendly, direct."
+        },
+        {
+          "question": "Do you have any personal interests or community involvement that shapes your business?",
+          "answer": "Community volunteer, local events supporter."
+        },
+        {
+          "question": "What client testimonials best represent the value you provide?",
+          "answer": "Charles made the process seamless and stress-free!"
+        }
+      ]
+    },
+    {
+      "section": "Business Goals",
+      "questions": [
+        {
+          "question": "What is your primary goal for your website?",
+          "answer": "Lead generation, branding, information resource."
+        },
+        {
+          "question": "What specific actions do you want visitors to take on your site?",
+          "answer": "Contact me, sign up for property search, schedule a consultation."
+        },
+        {
+          "question": "Which lead generation methods have worked best for you in the past?",
+          "answer": "Referrals, online marketing, open houses."
+        },
+        {
+          "question": "What types of clients are you most interested in attracting?",
+          "answer": "Serious buyers and sellers in the Triangle and Philadelphia markets."
+        }
+      ]
+    }
+  ]
 }
