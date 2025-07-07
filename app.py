@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import openai
 import os
@@ -20,6 +21,14 @@ prompt_template = prompt_obj.prompt  # or .content, depending on SDK version
 
 app = FastAPI()
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for development
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+)
+
 class QuestionAnswer(BaseModel):
     question: str
     answer: str
@@ -34,7 +43,7 @@ class ContentRequest(BaseModel):
 
 # Initialize LangChain's OpenAI wrapper
 llm = ChatOpenAI(
-    openai_api_key="<openai api key>",
+    openai_api_key=os.getenv("OPENAI_API_KEY"),  # Use environment variable instead
     model="gpt-3.5-turbo",
     temperature=0.7,
     max_tokens=1500
