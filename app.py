@@ -86,6 +86,7 @@ def generate_content(request: ContentRequest):
         input={"request": request.dict()},
         metadata={"model": "gpt-3.5-turbo"}
     ) as span:
+        print("request.agent_answers-->",request.agent_answers)
         # Build the prompt
         prompt = build_prompt(request.agent_answers)
         
