@@ -1,2 +1,4 @@
-myenv
+venv
 .env
+__pycache__
+personalized_emails.csv
