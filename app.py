@@ -52,7 +52,7 @@ class Section(BaseModel):
 class EmailGenerator(BaseModel):
     agent_answers: List[Section]
 
-EMAIL_CSV_PATH = r"C:\Users\tarun\OneDrive\Desktop\workspace\IDEAFOUNDATION\doc_understand\email_generate\emails.csv"
+EMAIL_CSV_PATH = r"data/emails.csv"
 OUTPUT_CSV_PATH = "personalized_emails.csv"
 
 # === Load DataFrame ===
