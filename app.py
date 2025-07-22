@@ -52,11 +52,13 @@ class Section(BaseModel):
 class EmailGenerator(BaseModel):
     agent_answers: List[Section]
 
-EMAIL_CSV_PATH = r"C:\Users\tarun\OneDrive\Desktop\workspace\IDEAFOUNDATION\doc_understand\email_generate\emails.csv"
-OUTPUT_CSV_PATH = "personalized_emails.csv"
 
 # === Load DataFrame ===
-df = pd.read_csv(EMAIL_CSV_PATH, quoting=csv.QUOTE_ALL, engine='python', on_bad_lines='skip', dtype=str)
+import json
+
+JSON_INPUT_PATH = r"C:\Users\tarun\OneDrive\Desktop\workspace\IDEAFOUNDATION\doc_understand\email_generate\easy_templates_csv_variables.json"
+with open(JSON_INPUT_PATH, "r", encoding="utf-8") as f:
+    data = json.load(f)  # data is a list of dicts with 'stage' and 'content'
 
 # Initialize LangChain's OpenAI wrapper
 llm = ChatOpenAI(
@@ -195,9 +197,9 @@ async def post_agent_questionnaire(agent_questionnaire: EmailGenerator):
         input={"questionnaire": custom_agent_context}
     )
     try:
-        for idx, row in df.iterrows():
-            sample_html = row['Content']
-            stage = row.get('Stage', 'Custom')
+        for idx, row in enumerate(data):
+            sample_html = row['template']
+            stage = row['stage']
             prompt = build_prompt(sample_html, stage, agent_context=custom_agent_context)
             try:
                 client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -219,9 +221,6 @@ async def post_agent_questionnaire(agent_questionnaire: EmailGenerator):
                     "error": str(e)
                 })
         span.update(output=personalized_emails)
-        output_df = df.copy()
-        output_df['Content'] = [email.get("personalized_email", email.get("error", "")) for email in personalized_emails]
-        output_df.to_csv(OUTPUT_CSV_PATH, index=False, quoting=csv.QUOTE_ALL)
         return JSONResponse(content={"personalized_emails": personalized_emails})
     except Exception as e:
         span.update(output=str(e), level="ERROR")
@@ -253,15 +252,15 @@ def personalize_content(html, stage):
 # === Apply Personalization ===
 def personalize_row(row):
     try:
-        original_html = row.get('Content', '')
+        original_html = row.get('template', '')
         stage = row.get('Stage')  # Default to 'Unknown' if not present
         if not isinstance(original_html, str) or not original_html.strip():
-            raise ValueError("Empty content")
+            raise ValueError("Empty template")
         personalized_html = personalize_content(original_html, stage)
         return personalized_html
     except Exception as e:
         print(f"skipped row: {e}")
-        return row['Content']  # fallback to original content
+        return row['template']  # fallback to original content
     
 def score_home_page(llm, content):
     return score_section_with_llm(llm, "home_page", content)
