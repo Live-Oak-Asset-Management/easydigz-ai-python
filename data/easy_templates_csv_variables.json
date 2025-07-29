@@ -291,5 +291,39 @@
         "required": false
       }
     ]
+  },
+  {
+    "_id": { "$oid": "64678e73d8c7eb6f388fd072" },
+    "name": "EASYDIGZ | New Listing Created | Listing Form",
+    "stage": "Listing-Created",
+    "template": "A listing has been created in EasyDigz!<br><br>Listing information:<br><br>1. Name:{{accountName}} <br> <br>2. Listing Address:{{listingAddress}}<br> <br>Listing URL - https://carolinalandexperts.retool.com/apps/4ea47700-1341-11ef-989b-f728df32ab1cEasyDigz/Listing%20Details?listingID={{id}}<br> Click Here \n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "This is the client's name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "listingAddress",
+        "description": "Full listing address",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "64678e73d8c7eb6f388fd072" },
+    "name": "EASYDIGZ | Opportunity Successful",
+    "stage": "Opportunity-Successful Lead Creation",
+    "template": "For: {{accountName}}<br><br>Dear {{accountName}},<br><br>We are thrilled to share an exciting opportunity with you! As our EasyDigz team serving the vibrant communities of Raleigh and Cary, we specialize in luxury homes and first-time homebuyer experiences. Our commitment to excellence is reflected in our use of cutting-edge technology, including virtual tours and 3D walkthroughs, ensuring you have a comprehensive view of your potential new home.<br><br>With five years of experience and our Accredited Buyer Representative certification, we leverage data-driven insights to guide you through every step of the real estate journey. Our bilingual services ensure that we can connect with a diverse range of clients, making the process as smooth and enjoyable as possible.<br><br>We invite you to explore this opportunity further: <a href=\"https://100061047213821540498.easydigz.com/admin/opportunities/{{id}}\">View Opportunity</a><br><br>We are here to support you and want you to feel confident in your decisions. If you have any questions or need assistance, please don’t hesitate to reach out to us at 9999999999 or via email at easy@gmail.com.<br><br>Warm regards,<br><br>The EasyDigz Team<br>sea plot, Mumbai, 400065, USA",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "This is the client's name",
+        "required": false
+      }
+    ]
   }
 ]
