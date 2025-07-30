@@ -80,19 +80,33 @@ def build_agent_prompt(agent_answers):
     return prompt
 
 def build_prompt(original_html, stage, agent_context=None):
+    print(f"[build_prompt] Building prompt for stage: {stage}")
+    print(f"[build_prompt] Original HTML length: {len(original_html)} characters")
+    print(f"[build_prompt] Agent context provided: {agent_context is not None}")
+    
     if agent_context is None:
+        print("[build_prompt] WARNING: Using default agent context (fallback)")
         agent_context = YOUR_DEFAULT_AGENT_CONTEXT  # fallback
 
-    # Fetch prompt template from Langfuse
-    prompt_obj = langfuse_client.get_prompt("personalize_email_prompt", label="production")
-    prompt_template = prompt_obj.prompt  # or .content, depending on SDK version
+    try:
+        # Fetch prompt template from Langfuse
+        print("[build_prompt] Fetching prompt template from Langfuse")
+        prompt_obj = langfuse_client.get_prompt("personalize_email_prompt", label="production")
+        prompt_template = prompt_obj.prompt  # or .content, depending on SDK version
+        print(f"[build_prompt] Successfully fetched prompt template, length: {len(prompt_template)}")
 
-    # Render the prompt with variables
-    return prompt_template.format(
-        original_html=original_html,
-        stage=stage,
-        agent_context=agent_context
-    )
+        # Render the prompt with variables
+        print("[build_prompt] Rendering prompt with variables")
+        rendered_prompt = prompt_template.format(
+            original_html=original_html,
+            stage=stage,
+            agent_context=agent_context
+        )
+        print(f"[build_prompt] Successfully rendered prompt, final length: {len(rendered_prompt)}")
+        return rendered_prompt
+    except Exception as e:
+        print(f"[build_prompt] ERROR building prompt for stage {stage}: {str(e)}")
+        raise
 
 # Initialize Langfuse
 langfuse = get_client()
@@ -189,8 +203,13 @@ def generate_content(request: ContentRequest):
 
 @app.post("/generate-email")
 async def post_agent_questionnaire(agent_questionnaire: EmailGenerator):
+    print("[generate-email] Starting email generation process")
+    print(f"[generate-email] Agent questionnaire sections count: {len(agent_questionnaire.agent_answers)}")
+    
     custom_agent_context = agent_questionnaire.dict()
     personalized_emails = []
+
+    print(f"[generate-email] Total email templates to process: {len(data)}")
 
     # Start a single Langfuse span for the batch (or do one per row if you prefer)
     span = langfuse_client.start_span(
@@ -201,8 +220,14 @@ async def post_agent_questionnaire(agent_questionnaire: EmailGenerator):
         for idx, row in enumerate(data):
             sample_html = row['template']
             stage = row['stage']
+            print(f"[generate-email] Processing template {idx + 1}/{len(data)} - Stage: {stage}")
+            print(f"[generate-email] Template length: {len(sample_html)} characters")
+            
             prompt = build_prompt(sample_html, stage, agent_context=custom_agent_context)
+            print(f"[generate-email] Built prompt length: {len(prompt)} characters for stage: {stage}")
+            
             try:
+                print(f"[generate-email] Calling OpenAI API for stage: {stage}")
                 client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
                 response = client.chat.completions.create(
                     model="gpt-4o-mini",
@@ -210,30 +235,45 @@ async def post_agent_questionnaire(agent_questionnaire: EmailGenerator):
                     temperature=0.1
                 )
                 output = response.choices[0].message.content.strip()
+                print(f"[generate-email] Successfully generated email for stage: {stage}, output length: {len(output)}")
+                
                 personalized_emails.append({
                     "row": idx,
                     "stage": stage,
                     "personalized_email": output
                 })
             except Exception as e:
+                print(f"[generate-email] ERROR generating email for stage {stage}: {str(e)}")
                 personalized_emails.append({
                     "row": idx,
                     "stage": stage,
                     "error": str(e)
                 })
+        
+        print(f"[generate-email] Completed processing all templates. Success count: {len([e for e in personalized_emails if 'error' not in e])}")
+        print(f"[generate-email] Error count: {len([e for e in personalized_emails if 'error' in e])}")
+        
         span.update(output=personalized_emails)
         return JSONResponse(content={"personalized_emails": personalized_emails})
     except Exception as e:
+        print(f"[generate-email] FATAL ERROR in email generation: {str(e)}")
         span.update(output=str(e), level="ERROR")
         raise
     finally:
         span.end()
+        print("[generate-email] Email generation process completed")
 
 # === Call OpenAI ===
 def personalize_content(html, stage):
+    print(f"[personalize_content] Starting personalization for stage: {stage}")
+    print(f"[personalize_content] Input HTML length: {len(html)} characters")
+    
     prompt = build_prompt(html, stage)
+    print(f"[personalize_content] Built prompt for personalization, length: {len(prompt)}")
+    
     span = langfuse_client.start_span(name="personalize_email", input=prompt)
     try:
+        print(f"[personalize_content] Calling OpenAI API for personalization - stage: {stage}")
         client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
         response = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -241,9 +281,12 @@ def personalize_content(html, stage):
             temperature=0.1
         )
         output = response.choices[0].message.content.strip()
+        print(f"[personalize_content] Successfully personalized content for stage {stage}, output length: {len(output)}")
+        
         span.update(output=output)
         return output
     except Exception as e:
+        print(f"[personalize_content] ERROR personalizing content for stage {stage}: {str(e)}")
         span.update(output=str(e), level="ERROR")
         print(f"⚠️ LLM Error: {e}")
         return html  # fallback to original
