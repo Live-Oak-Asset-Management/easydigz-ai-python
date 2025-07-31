@@ -1,23 +1,24 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import List, Dict, Any
 import openai
 import os
 import json
 import re
+import csv
+import langfuse
+import logging
+import pandas as pd
 from langchain_community.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import HumanMessage, SystemMessage
-from langfuse import get_client, observe
-import logging
+from langfuse import get_client, observe, Langfuse
+
 
 from dotenv import load_dotenv
 load_dotenv()
-
-# Initialize Langfuse
-langfuse = get_client()
-prompt_obj = langfuse.get_prompt("real_estate_content_generation", label="production")
-prompt_template = prompt_obj.prompt  # or .content, depending on SDK version
 
 app = FastAPI()
 
@@ -33,6 +34,10 @@ class QuestionAnswer(BaseModel):
     question: str
     answer: str
 
+class Question(BaseModel):
+    question: str
+    answer: str
+    
 class QuestionSection(BaseModel):
     section: str
     questions: list[QuestionAnswer]
@@ -40,17 +45,31 @@ class QuestionSection(BaseModel):
 class ContentRequest(BaseModel):
     agent_answers: list[QuestionSection]
 
+class Section(BaseModel):
+    section: str
+    questions: List[Question]
+
+class EmailGenerator(BaseModel):
+    agent_answers: List[Section]
+
+
+# === Load DataFrame ===
+import json
+
+JSON_INPUT_PATH = r"data/easy_templates_csv_variables.json"
+with open(JSON_INPUT_PATH, "r", encoding="utf-8") as f:
+    data = json.load(f)  # data is a list of dicts with 'stage' and 'content'
 
 # Initialize LangChain's OpenAI wrapper
 llm = ChatOpenAI(
     openai_api_key=os.getenv("OPENAI_API_KEY"),  # Use environment variable instead
-    model="gpt-3.5-turbo",
+    model="gpt-4o-mini",
     temperature=0.7,
     max_tokens=1500
 )
 
-@observe(name="build_prompt")
-def build_prompt(agent_answers):
+@observe(name="build_agent_prompt")
+def build_agent_prompt(agent_answers):
     """Build the complete prompt from agent answers"""
     prompt = prompt_template
     for section in agent_answers:
@@ -59,6 +78,46 @@ def build_prompt(agent_answers):
             prompt += f"- {qa.question}\n{qa.answer}\n"
     
     return prompt
+
+def build_prompt(original_html, stage, agent_context=None):
+    print(f"[build_prompt] Building prompt for stage: {stage}")
+    print(f"[build_prompt] Original HTML length: {len(original_html)} characters")
+    print(f"[build_prompt] Agent context provided: {agent_context is not None}")
+    
+    if agent_context is None:
+        print("[build_prompt] WARNING: Using default agent context (fallback)")
+        agent_context = YOUR_DEFAULT_AGENT_CONTEXT  # fallback
+
+    try:
+        # Fetch prompt template from Langfuse
+        print("[build_prompt] Fetching prompt template from Langfuse")
+        prompt_obj = langfuse_client.get_prompt("personalize_email_prompt", label="production")
+        prompt_template = prompt_obj.prompt  # or .content, depending on SDK version
+        print(f"[build_prompt] Successfully fetched prompt template, length: {len(prompt_template)}")
+
+        # Render the prompt with variables
+        print("[build_prompt] Rendering prompt with variables")
+        rendered_prompt = prompt_template.format(
+            original_html=original_html,
+            stage=stage,
+            agent_context=agent_context
+        )
+        print(f"[build_prompt] Successfully rendered prompt, final length: {len(rendered_prompt)}")
+        return rendered_prompt
+    except Exception as e:
+        print(f"[build_prompt] ERROR building prompt for stage {stage}: {str(e)}")
+        raise
+
+# Initialize Langfuse
+langfuse = get_client()
+prompt_obj = langfuse.get_prompt("real_estate_content_generation", label="production")
+prompt_template = prompt_obj.prompt  # or .content, depending on SDK version
+
+langfuse_client = Langfuse(
+    public_key=os.environ.get("LANGFUSE_PUBLIC_KEY"),
+    secret_key=os.environ.get("LANGFUSE_SECRET_KEY"),
+    host=os.environ.get("LANGFUSE_HOST", "https://cloud.langfuse.com")
+)
 
 @observe(name="clean_json")
 def clean_json(text):
@@ -84,10 +143,11 @@ def generate_content(request: ContentRequest):
     with langfuse.start_as_current_span(
         name="llm_generation",
         input={"request": request.dict()},
-        metadata={"model": "gpt-3.5-turbo"}
+        metadata={"model": "gpt-4o-mini"}
     ) as span:
+        print("request.agent_answers-->",request.agent_answers)
         # Build the prompt
-        prompt = build_prompt(request.agent_answers)
+        prompt = build_agent_prompt(request.agent_answers)
         
         # Use LangChain to call the LLM
         messages = [
@@ -141,6 +201,111 @@ def generate_content(request: ContentRequest):
             "scores": scores
         }
 
+@app.post("/generate-email")
+async def post_agent_questionnaire(agent_questionnaire: EmailGenerator):
+    print("[generate-email] Starting email generation process")
+    print(f"[generate-email] Agent questionnaire sections count: {len(agent_questionnaire.agent_answers)}")
+    
+    custom_agent_context = agent_questionnaire.dict()
+    personalized_emails = []
+
+    print(f"[generate-email] Total email templates to process: {len(data)}")
+
+    # Start a single Langfuse span for the batch (or do one per row if you prefer)
+    span = langfuse_client.start_span(
+        name="agent_questionnaire_batch",
+        input={"questionnaire": custom_agent_context}
+    )
+    try:
+        for idx, row in enumerate(data):
+            sample_html = row['template']
+            stage = row['stage']
+            print(f"[generate-email] Processing template {idx + 1}/{len(data)} - Stage: {stage}")
+            print(f"[generate-email] Template length: {len(sample_html)} characters")
+            
+            prompt = build_prompt(sample_html, stage, agent_context=custom_agent_context)
+            print(f"[generate-email] Built prompt length: {len(prompt)} characters for stage: {stage}")
+            
+            try:
+                print(f"[generate-email] Calling OpenAI API for stage: {stage}")
+                client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.1
+                )
+                output = response.choices[0].message.content.strip()
+                print(f"[generate-email] Successfully generated email for stage: {stage}, output length: {len(output)}")
+                
+                personalized_emails.append({
+                    "row": idx,
+                    "stage": stage,
+                    "personalized_email": output
+                })
+            except Exception as e:
+                print(f"[generate-email] ERROR generating email for stage {stage}: {str(e)}")
+                personalized_emails.append({
+                    "row": idx,
+                    "stage": stage,
+                    "error": str(e)
+                })
+        
+        print(f"[generate-email] Completed processing all templates. Success count: {len([e for e in personalized_emails if 'error' not in e])}")
+        print(f"[generate-email] Error count: {len([e for e in personalized_emails if 'error' in e])}")
+        
+        span.update(output=personalized_emails)
+        return JSONResponse(content={"personalized_emails": personalized_emails})
+    except Exception as e:
+        print(f"[generate-email] FATAL ERROR in email generation: {str(e)}")
+        span.update(output=str(e), level="ERROR")
+        raise
+    finally:
+        span.end()
+        print("[generate-email] Email generation process completed")
+
+# === Call OpenAI ===
+def personalize_content(html, stage):
+    print(f"[personalize_content] Starting personalization for stage: {stage}")
+    print(f"[personalize_content] Input HTML length: {len(html)} characters")
+    
+    prompt = build_prompt(html, stage)
+    print(f"[personalize_content] Built prompt for personalization, length: {len(prompt)}")
+    
+    span = langfuse_client.start_span(name="personalize_email", input=prompt)
+    try:
+        print(f"[personalize_content] Calling OpenAI API for personalization - stage: {stage}")
+        client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.1
+        )
+        output = response.choices[0].message.content.strip()
+        print(f"[personalize_content] Successfully personalized content for stage {stage}, output length: {len(output)}")
+        
+        span.update(output=output)
+        return output
+    except Exception as e:
+        print(f"[personalize_content] ERROR personalizing content for stage {stage}: {str(e)}")
+        span.update(output=str(e), level="ERROR")
+        print(f"⚠️ LLM Error: {e}")
+        return html  # fallback to original
+    finally:
+        span.end()
+
+# === Apply Personalization ===
+def personalize_row(row):
+    try:
+        original_html = row.get('template', '')
+        stage = row.get('Stage')  # Default to 'Unknown' if not present
+        if not isinstance(original_html, str) or not original_html.strip():
+            raise ValueError("Empty template")
+        personalized_html = personalize_content(original_html, stage)
+        return personalized_html
+    except Exception as e:
+        print(f"skipped row: {e}")
+        return row['template']  # fallback to original content
+    
 def score_home_page(llm, content):
     return score_section_with_llm(llm, "home_page", content)
 
