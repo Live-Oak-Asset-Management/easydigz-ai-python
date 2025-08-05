@@ -1,0 +1,329 @@
+[
+  {
+    "_id": { "$oid": "646dbcd5783fbb486b23af9a" },
+    "name": "EASYDIGZ | Listing | Quickbooks - Final Invoice Paid",
+    "stage": "Listing-Final Invoice Paid",
+    "template": "Hello {{accountName}},\n\nThank you for your payment.",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "Enter name here",
+        "required": true
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "6467dd17783fbb486b23af93" },
+    "name": "EASYDIGZ | Opportunity Updated - Stage Closed Won",
+    "stage": "Opportunity-Closed Won",
+    "template": "Wow {{accountName}}, \n<br><br>\nBuying a home can be a challenging process. We at EasyDigz have made it our mission to lower the stress of buying real estate and increase the ease and speed of both getting a home under contract and getting the deed in your name. \n<br><br>\nWe truly hope we have lived up to our goals. \n<br><br>\nThank you for trusting us to walk with you on this journey and please let us know how we did. \n<br><br>\nAs always, if you ever need anything, do not hesitate to ask.\n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "This is the client's name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "propertyStreetAddress",
+        "description": "This is the full street address of the property",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "6467c8ea783fbb486b23af90" },
+    "name": "EASYDIGZ | Opportunity Updated - Stage Offer Submitted",
+    "stage": "Opportunity-Offer Submitted",
+    "template": "Good news! \n<br/>\nYour offer on {{address}} has officially been submitted to the seller. As soon as we have a response we will reach back out to you and discuss your options. \n\n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "address",
+        "description": "This is the general address of the listing",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "propertyStreetAddress",
+        "description": "This is the full street address of the property",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "6467ca5d783fbb486b23af91" },
+    "name": "EASYDIGZ | Opportunity Updated - Stage Under Contract",
+    "stage": "Opportunity-Under Contract",
+    "template": "Congratulations! Your hard work and patience has paid off and you are now officially under contract to buy {{address}}! We are here for you every step of the way so feel free to reach out with any questions you may have. \n<br><br>\nNext, we will be scheduling the home inspection and closing attorney so stay on the lookout for information regarding these. \n<br><br>\nTalk soon,<br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "address",
+        "description": "This is the general address of the listing",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "propertyStreetAddress",
+        "description": "This is the full street address of the property",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "646b157b783fbb486b23af94" },
+    "name": "EASYDIGZ | Listing Updated - Stage Agent Reviewed",
+    "stage": "Listing-Agent Reviewed",
+    "template": "<p>Hello {{accountName}}, as discussed on our call, we have sent you the listing documents for electronic signature. Please review the documents and if you have questions, we are here to help. Once the documents are signed we will get the 3D Tour, Pre-Inspection and Photography scheduled. Also, look out for an invoice from Quickbooks for our initial fee. <br><br>We look forward to working with you and thank you for choosing the EasyDigz Team!</p>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "Client's name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "listingAddress",
+        "description": "Full listing address",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "6467dc41783fbb486b23af92" },
+    "name": "EASYDIGZ | Opportunity Updated - Stage Due Dillegence",
+    "stage": "Opportunity-Due Diligence",
+    "template": "Hello again {{accountName}}, \n<br><br>\nIt looks like we are about to cross another item off of our list. Your Due Diligence period is about to end which means you have completed all of the due diligence necessary to safely move forward with the purchase of this property. This includes but is not limited to; all inspections, surveys, appraisals, walk throughs, estimates, lending and other items you would like to have done in order to make sure this is the right home for you. \n<br><br>\nThis also means we are getting closer to closing on this home and moving! Our agents will be in touch with you from now through closing to make sure all of the loose ends are taken care of. \n<br><br>\nAs always, let us know if you need anything at all. \n\n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "This is the client's name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "propertyStreetAddress",
+        "description": "This is the full street address of the property",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "646b30a0783fbb486b23af98" },
+    "name": "EASYDIGZ | Listing Updated - Stage Sold",
+    "stage": "Listing-Stage Sold",
+    "template": "Hello {{accountName}}, \n\nCongratulations! we may we made it. Thank you so much for using easy digz. We look forward to serving you in the future, please let us know how we did, and as always, tell your friends how much money you saved and how great your experience was!",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "Client's name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "listingAddress",
+        "description": "Full listing address",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "646b1f69783fbb486b23af97" },
+    "name": "EASYDIGZ | Listing Updated - Stage 3D Complete",
+    "stage": "Listing-Stage 3D Complete",
+    "template": "Hello {{accountName}}, \n<br><br>\n3D photography and pre-inspection has been completed\n<br><br>\nThis is an exciting moment in the sale of your awesome home! Your 3D tour and Pre-Inspection have been completed and are available on your portal. Your assigned agent will contact you soon to walk through your listing with you and review everything prior to making your listing live!",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "Account name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "listingAddress",
+        "description": "Full listing address",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "64678cd0d8c7eb6f388fd071" },
+    "name": "EASYDIGZ | Opportunity Updated - Stage Created",
+    "stage": "Opportunity-Created",
+    "template": "Hello {{accountName}},\n<br><br>\nThank you for creating your account at EasyDigz.com. Have fun on the site and remember to reach out to us if you have any questions. \n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "This is the client's name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "propertyStreetAddress",
+        "description": "This is the full street address of the property",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "6467c718783fbb486b23af8f" },
+    "name": "EASYDIGZ | Opportunity Updated - Stage Qualification",
+    "stage": "Opportunity-Qualification",
+    "template": "<p>Hi again {{accountName}},<br><br>Thank you very much for reviewing the information with our licensed real estate agent. We are working hard to get your offer together and will be sending all of the paperwork to you via email very soon for your electronic signature. Once this happens we will be submitting the offer to the seller or sellers agent on your behalf. <br><br>We will talk with you very soon!<br><br><br><b>EasyDigz Team</b><br>919-275-5868<br><a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br></p>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "This is the client's name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "propertyStreetAddress",
+        "description": "This is the full street address of the property",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "646b1d95783fbb486b23af96" },
+    "name": "EASYDIGZ | Listing Updated - Stage Listing Live",
+    "stage": "Listing-Live",
+    "template": "And drum roll please!!!! Your Listing is now live for all to see! \n<br><br>\nYep, that is right, your listing is being marketed to hundreds of websites, the local MLS and to buyers that have requested early access to listings through our site! This is what we have all been waiting for. \n<br><br>\nBe sure to keep a close eye on your emails and phone for questions we may have or information we need to share. \n<br><br>\nHere's to a perfect contract soon!",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "listingAddress",
+        "description": "Full listing address",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "646b386f783fbb486b23af99" },
+    "name": "EASYDIGZ | Listing | Send Inspection Event - Cannot Resubmit",
+    "stage": "Listing-Send Inspection Event - Cannot Resubmit",
+    "template": "You cannot resubmit this form. If you wish to reschedule the inspection modify the calendar event sent to you or you can reschedule the event by contacting us.",
+    "variable_input_schema": []
+  },
+  {
+    "_id": { "$oid": "646787f7d8c7eb6f388fd070" },
+    "name": "EASYDIGZ | Buy Now Form - New Opportunity Created",
+    "stage": "Opportunity-New Form",
+    "template": "Hello {{accountName}}, \n<br><br>\nThank you for making an offer using EasyDigz. If you have any questions please do not hesitate to reach out. Our office is available any time at 919-275-5868\n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "This is the client's name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "streetNumber",
+        "description": "This is the street number of the property",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "streetName",
+        "description": "This is the name of the street",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "city",
+        "description": "This is the city where the property is located",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "646b0da0d8c7eb6f388fd073" },
+    "name": "EASYDIGZ | Listing Updated - Stage Created",
+    "stage": "Listing-Update Created",
+    "template": "Hello {{accountName}},\n<br/><br/>\nThank you for creating an account and listing with EasyDigz! One of our Agents will review your listing and call you soon to discuss next steps.",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "Account name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "listingAddress",
+        "description": "Full listing address",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "64678e73d8c7eb6f388fd072" },
+    "name": "EASYDIGZ | Opportunity Updated - Stage Agent Reviewed",
+    "stage": "Opportunity-Agent Reviewed",
+    "template": "Hello {{accountName}}, \n<br><br>\nThank you very much for making an offer on {{address}}.  Our licensed real estate agent is reviewing the paperwork and will reach out to you via phone in the next 60 minutes. \n<br><br>\nFeel free to call or email with any questions. \n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "This is the client's name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "address",
+        "description": "This is the general address of the listing",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "propertyStreetAddress",
+        "description": "This is the full street address of the property",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "64678e73d8c7eb6f388fd072" },
+    "name": "EASYDIGZ | New Listing Created | Listing Form",
+    "stage": "Listing-Created",
+    "template": "A listing has been created in EasyDigz!<br><br>Listing information:<br><br>1. Name:{{accountName}} <br> <br>2. Listing Address:{{listingAddress}}<br> <br>Listing URL - https://{{agentId}}.easydigz.com/dashboard <br> Click Here \n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "This is the client's name",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "listingAddress",
+        "description": "Full listing address",
+        "required": false
+      }
+    ]
+  },
+  {
+    "_id": { "$oid": "64678e73d8c7eb6f388fd072" },
+    "name": "EASYDIGZ | Opportunity Successful",
+    "stage": "Opportunity-Successful Lead Creation",
+    "template": "For: {{accountName}}<br><br>Dear {{accountName}},<br><br>We are thrilled to share an exciting opportunity with you! As our EasyDigz team serving the vibrant communities of Raleigh and Cary, we specialize in luxury homes and first-time homebuyer experiences. Our commitment to excellence is reflected in our use of cutting-edge technology, including virtual tours and 3D walkthroughs, ensuring you have a comprehensive view of your potential new home.<br><br>With five years of experience and our Accredited Buyer Representative certification, we leverage data-driven insights to guide you through every step of the real estate journey. Our bilingual services ensure that we can connect with a diverse range of clients, making the process as smooth and enjoyable as possible.<br><br>We invite you to explore this opportunity further: <a href=\"https://{{agentId}}.easydigz.com/admin/opportunities/{{id}}\">View Opportunity</a><br><br>We are here to support you and want you to feel confident in your decisions. If you have any questions or need assistance, please don’t hesitate to reach out to us at 9999999999 or via email at easy@gmail.com.<br><br>Warm regards,<br><br>The EasyDigz Team<br>sea plot, Mumbai, 400065, USA",
+    "variable_input_schema": [
+      {
+        "type": "string",
+        "title": "accountName",
+        "description": "This is the client's name",
+        "required": false
+      }
+    ]
+  }
+]

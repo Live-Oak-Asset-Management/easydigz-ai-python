@@ -1,0 +1,1885 @@
+[{
+  "_id": {
+    "$oid": "6401c78b197f7140a98e29cc"
+  },
+  "name": "NCDOT | Counter Offer | Auction Counter Offer",
+  "template": "Buyer Email: {{email}}<br>\nSelling Agent : {{sellingAgentEmail}}<br>\nHello {{name}}, <br>Your counter offer for NCDOT : {{ncdot}} has been received.<br> Old Amount : {{oldAmountOffered}}<br> New Amount: {{newAmountOffered}} <br> <br> <br/><br/> <b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b> <br/><br/> <b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/> Carolina Land Experts<br/> 919-275-5868<br/> <br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "email",
+      "description": "Enter email here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "sellingAgentEmail",
+      "description": "Enter selling agent email here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "oldAmountOffered",
+      "description": "Enter old amount offered here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "newAmountOffered",
+      "description": "Enter new amount offered here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "64007c5c2748a315e533ab2a"
+  },
+  "name": "Test Template",
+  "template": "Hello {{name}}\n\n",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": true,
+      "default_value": "John"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "64019f923ff5e33480c76bdb"
+  },
+  "name": "NCDOT | Internal | Attorney General Stage - Dead is Ready | Opportunity Updated",
+  "template": "<b>This email will be sent to {{name}}  :  {{buyerEmail}} {{sellingAgentName}}. Testing for correct recipients</b><br>\nHello {{name}},\n <br/><br/>\nThank you for placing a bid on NCDOT #: {{ncdot}} for ${{amountOffered}}. Your contract package has been approved and your preliminary deed is attached. Please review the deed for accuracy. If any changes are requested please respond to this email and let us know.\n<br><br>\nA request for final payment has been sent from QuickBooks to your email address. Print this invoice and mail funds via certified check to:\n<br><br>\nNCDOT Transportation Building\nc/o Charlie Grady\n1 S Wilmington St\nRaleigh, NC 27601\n<br><br>\n Once this is paid we will record this deed at the County in which the property is located.\n<br><br>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n<br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "buyerEmail",
+      "description": "Enter buyer email here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "sellingAgentName",
+      "description": "Enter selling agent name here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot number here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter amount offered here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "640180c03ff5e33480c76bd5"
+  },
+  "name": "NCDOT | Already offer made | Auction form",
+  "template": "Hello {{name}},\n<br/><br/>\nOops! It looks like you've already made an offer on this property. In order to change your offer please see the {{{counterLink}}} or edit through your members portal.\n<br>The highest active bid is ${{highestActiveBid}}. The window for placing bids ends on {{bidEndDate}}.\n<br/><br/>\nThank you\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "counterLink",
+      "description": "Enter Counter Link here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "highestActiveBid",
+      "description": "Enter Highest Active Bid here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "bidEndDate",
+      "description": "Enter Bid End Date here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "640197436239cc738887ff48"
+  },
+  "name": "NCDOT | Acceptance Stage - Auction Offer | Opportunity Updated",
+  "template": "Hello {{name}},\n<br><br>\nThank you for placing a bid on NCDOT # {{ncdot}} for {{amountOffered}}. Your contract package has been approved and your preliminary deed is attached to this email. Please review the deed for accuracy. If any changes are requested please respond to this email and let us know.\n<br><br>\nThis is a request for final payment. Payment is due 30 days from receipt of this email.\n<br><br>\nFinal Bid Amount: {{finalBidAmount}}<br>\nRecording Fee: ${{recordingFee}}<br>\nTotal Due: {{totalDue}}<br>\n<br>\n<b>Print this Email and mail funds via certified check to</b>:\n<br><br>\nIf sending through <b>Postal Service</b> you <b>MUST</b> use:\n<br><br>\nNCDOT Transportation<br>\nc/o Adrienne Harrington<br>\n1546 Mail Service Center<br>\nRaleigh, NC 27699-1501<br>\n<br><br>\nIf using <b>FedEx</b> or <b>UPS</b> you <b>MUST</b> use:\n<br><br>\nNCDOT Transportation Building<br>\nc/o Charlie Grady<br>\n1 S. Wilmington St<br>\nRaleigh, NC 27601<br>\n<br>\nPlease make check payable to “NCDOT”\n<br><br>\nOnce this is paid the Attorney General's office will record the deed at the County in which the property is located.\n<br><br>\nSee www.carolinalandexperts.com for more information on the purchase process.\n<br><br>\nPlease note, We represent the NCDOT and not the purchaser in this transaction.\n<br><br>\nCarolina Land Experts<br>\n919-275-5868\n<br><br>\nPlease Note: The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter amount offered here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "finalBidAmount",
+      "description": "Enter final bid amount here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "recordingFee",
+      "description": "Enter recording fee here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "totalDue",
+      "description": "Enter total due here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401bdc5197f7140a98e29c9"
+  },
+  "name": "NCDOT | Internal | Closed Lost Stage - Change Loop Status  | Opportunity Updated",
+  "template": "Hello,\n<br/>\n<br/>\nChanging status of : {{loopName}} to Terminated",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "loopName",
+      "description": "Enter loop name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642e99d69ef9036e1976fe98"
+  },
+  "name": "PRIVATE | Counter Offer - Possible Discrepancy",
+  "template": "<b>The received amount is less than the highest bid amount in GIS</b>\nHello {{name}}, <br>Your counter offer for NCDOT : {{ncdot}} has been received.<br>\nOld Amount :{{oldAmountOffered}}<br>\nNew Amount: {{newAmountOffered}} <br>\n<br>\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "oldAmountOffered",
+      "description": "Enter old amount offered here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "newAmountOffered",
+      "description": "Enter new amount offered here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "646dbcd5783fbb486b23af9a"
+  },
+  "name": "EASYDIGZ | Listing | Quickbooks - Final Invoice Paid",
+  "template": "Hello {{name}},\n\nThank you for your payment.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": true,
+      "default_value": "John"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d6ed29ef9036e1976fe90"
+  },
+  "name": "PRIVATE | Closed Lost Stage - Rejection Notice  | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nThank you very much for your offer on{{listingAddress}},  MLS Number: {{mlsNumber}}. The Seller has chosen to not move forward with your offer at this time. \n\n <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "listingAddress",
+      "description": "Enter listingAddress here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "mlsNumber",
+      "description": "Enter mlsNumber here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "640190e26239cc738887ff46"
+  },
+  "name": "NCDOT | Qualification Stage - isDirty False | Opportunity Updated",
+  "template": "Hello {{name}},\n<br/><br/>\nYour bid of {{bidAmount}} has now been received. The window for placing bids ends on {{offerEndDate}} <br/><br/>\nFrom this point there is a minmum 10 business day waiting period for additional bids. If there are multiple bids we will contact all parties via email each time the highest active bid amount increases. You will be able to alter your bid amount via said multiple offer notification. To be considered by NCDOT management the highest bidding price must be upset by at least 5%.\n<br/><br/>\nIf the highest bid is upset in the final hour of the bidding window, the bidding time is extended by one hour with a maximum of 12 upsets. \n<br/><br/>\nThe highest bid, if accepted, will submit a <b>non-refundable</b> buyer premium of {{auctionBuyerRate}} of bid amount or {{auctionFixedRate}}, whichever is greater to Carolina Land Experts.This payment is in addition to the purchase price. Payment instructions will be sent along with notification of winning bid within 24 hours of auction closing.\n<br/><br/>\nAfter the buyer premium is paid you will receive an electronic offer package consisting of the NC Offer to purchase, Working with Real Estate Agents brochure and the NCDOT addendum for your review and electronic signature\n<br/><br/>\nAfter signed contract packages have initial acceptance, NCDOT Board approval and in some cases Council of State approval, the Attorney General's office will record the deed for the property owner. The entire process can take 90-120 days from the end of the auction.\n<br/><br/>\n<b>Please note, buyer premium is non-refundable for any circumstance.</b>\n <br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<u>Please note</u>, We represent the NCDOT and not the purchaser in this transaction. \n<br/><br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "bidAmount",
+      "description": "Enter Bid amount here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "offerEndDate",
+      "description": "Enter offer end date here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "auctionBuyerRate",
+      "description": "Enter auction buyer rate here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "auctionFixedRate",
+      "description": "Enter auction fixed rate here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401bfae99d6c059c55592c9"
+  },
+  "name": "NCDOT | Board Review Stage - Initial Acceptance  | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nThank you for placing a bid on NCDOT {{ncdot}}: for ${{amountOffered}} The NCDOT has signed your contract package and your bid now has initial approval. \n <br/><br/>\nSome properties will require additional review by the NC Council of State prior to final approval. That will require an additional 30-60 days. Once we have final approval, the Attorney General's office will take over and get the deed recorded for the property owner. This can take up to 45-60 days depending on when we have final approval.\n <br/><br/>\n<b>We will update you as soon as we have new information. If you have any questions please don't hesitate to contact us.</b>\n <br/><br/>\nSee www.carolinalandexperts.com for more information on the purchase process.\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868\n{{data.logger['63e9c356a52b7e7bea94104a']['loggedMessage']}}",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401cbb199d6c059c55592ce"
+  },
+  "name": "NCDOT | Counter Offer - Offer Cannot be accepted",
+  "template": "Hello {{name}}, <br>Your counter offer for NCDOT : {{ncdot}} cannot be accepted as the deadline for offers has passed.\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6467dd17783fbb486b23af93"
+  },
+  "name": "EASYDIGZ | Opportunity Updated - Stage Closed Won",
+  "template": "Wow {{name}}, \n<br><br>\nBuying a home can be a challenging process. We at EasyDigz have made it our mission to lower the stress of buying real estate and increase the ease and speed of both getting a home under contract and getting the deed in your name. \n<br><br>\nWe truly hope we have lived up to our goals. \n<br><br>\nThank you for trusting us to walk with you on this journey and please let us know how we did. \n<br>\n<a href =\"https://g.page/r/Cc8A-8NHrwLbEB0/review\">Easy Digz survey</a>\n<br><br>\nAs always, if you ever need anything, do not hesitate to ask.\n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "648c2e9336799d238eb02fe3"
+  },
+  "name": "NCDOT | Counter Offer  - Same Amount Offered Rejected",
+  "template": "Dear {{name}},\n<br/><br/>\nThank you for you bid of ${{amountOffred}} on NCDOT# {{ncdot}}. We regret to inform you that your bid has not been accepted. Another bidder has submitted a higher offer.\n<br/><br/>\nPlease submit a new bid using {{{bidLink}}}\n<br/>\n<br/>\nIf you have any questions or need further clarification, feel free to reach out. We wish you the best of luck.\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "amountOffred",
+      "description": "Enter amountOffred here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "bidLink",
+      "description": "Enter bidLink here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "64019c663ff5e33480c76bda"
+  },
+  "name": "NCDOT | Internal | Initial Accpetance Stage - Update MLS | Opportunity Updated",
+  "template": "Hello,\n <br/>\n This is a system reminder to update the status of the above mentioned opportunity in MLS.\n<br/>\nOpportunity <a href='https://carolinalandexperts.retool.com/apps/a6d260f4-6f18-11ee-a0fc-87eeef82690c/Single%20Opportunity%20App?opportunityID={{rowID}}'>Link</a>\nDotloop <a href='{{dotloopLink}}'>Link</a>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "rowID",
+      "description": "Enter row ID here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "dotloopLink",
+      "description": "Enter dotloop link here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401c43599d6c059c55592cc"
+  },
+  "name": "NCDOT | Internal | Buyer Premium Stage - Payment Recieved | Opportunity Updated",
+  "template": "Hello,\n<br/>\n<br/>\n{{name}} just paid the buyer premium payment for NC DOT Asset # {{ncdot}}<br/><br/>\n<b>See <a href='https://carolinalandexperts.retool.com/apps/a6d260f4-6f18-11ee-a0fc-87eeef82690c/Single%20Opportunity%20App?opportunityID={{rowID}}'>Opportunity</a></b>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "rowID",
+      "description": "Enter row ID here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d3da19ef9036e1976fe8d"
+  },
+  "name": "PRIVATE | Qualification Stage - isDirty False | Opportunity Updated",
+  "template": "Hello {{name}},\n<br/><br/>\nYour bid of {{amountOffered}} has now been received. The window for placing bids ends on {{offerWindowEndDate}}\n <br/><br/>\nFrom this point there is a 10 business day waiting period for additional bids. If there are multiple bids we will contact all involved parties requesting Highest and Best bids. To be considered by the Seller, the highest bidding price must be upset by at least 1%.\n<br/><br/>\nIf the highest bid is upset in the final hour of the bidding window, the bidding time is extended by one hour with a maximum of 12 upsets. \n<br/><br/>\nThe highest bid, if accepted, will submit a <b>non-refundable</b>  buyer premium of 10% of bid amount or $200, whichever is greater to Carolina Land Experts. Payment instructions will be sent along with notification of high winning bid.\n<br/><br/>\nAfter the buyer premium is paid You will be sent an offer package for signatures that will be sent to the Seller for initial review. Once we have initial acceptance or counter of the highest bid by the Seller, we will send a completed contract package for your records. \n<b>Please note, buyer premium is non-refundable for any circumstance.</b>\n <br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<u>Please note</u>, We represent the Seller and not the purchaser in this transaction. \n<br/><br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter amountOffered here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "offerWindowEndDate",
+      "description": "Enter offerWindowEndDate here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d4b9a938fa95c1e166696"
+  },
+  "name": "PRIVATE | Acceptance Stage | Opportunity Updated",
+  "template": "Hello {{name}},\n<br><br>\nThank you so much for working with us on {{listingAddress}}, MLS Number: {{mlsNumber}}.\n<br><br>\nPlease see attached contract package.\n<br><br>\nWe look forward to getting this closed and working with you in the future!\n\n<br><br>\nSee www.carolinalandexperts.com for more information on the purchase process.\n\n<br><br>\nCarolina Land Experts<br>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "listingAddress",
+      "description": "Enter listingAddress here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "mlsNumber",
+      "description": "Enter mlsNumber here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642e51889ef9036e1976fe94"
+  },
+  "name": "PRIVATE | Agent Reviewed Stage | Listing Updated",
+  "template": "Hello {{name}},\n\nAs discussed on our call, we will be sending you an email with the documents. Please review and if you have questions, we are here to help. If marketing material assistance is requested, we will send you a scheduler via email.\n\nWe look forward to working with you and thank you for choosing the Carolina Land Experts Team!",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642e63089ef9036e1976fe96"
+  },
+  "name": "PRIVATE | Listing Live Stage | Listing Updated",
+  "template": "And drum roll please!!!! Your Listing is now live for all to see! \n\nYep, that is right, your listing is being marketed to hundreds of websites, the local MLS and to buyers that have requested early access to listings through our site! This is what we have all been waiting for. \n\nBe sure to keep a close eye on your emails and phone for questions we may have or information we need to share. \n\nHere’s to a perfect contract soon!",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": true,
+      "default_value": "John"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642e9abe938fa95c1e16669a"
+  },
+  "name": "PRIVATE | Counter Offer - Deadline passed for offer",
+  "template": "Hello {{name}}, <br>Your counter offer for NCDOT : {{ncdot}} cannot be accepted as the deadline for offers has passed.\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6467c8ea783fbb486b23af90"
+  },
+  "name": "EASYDIGZ | Opportunity Updated - Stage Offer Submitted",
+  "template": "Good news! \n<br/>\nYour offer on {{address}} has officially been submitted to the seller. As soon as we have a response we will reach back out to you and discuss your options. \n\n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "address",
+      "description": "Enter address here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401c2a499d6c059c55592cb"
+  },
+  "name": "NCDOT | Council Review Stage | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nThank you for placing a bid on NCDOT #: {{ncdot}} for ${{amountOffered}}. The Council of State has reviewed your contract package and has decided to move forward with the sell of this property.\n <br/><br/>\nThe Attorney General's office will now take over and get the deed recorded for the property owner. This can take up to 45-60 days depending on when we have final approval.\n <br/><br/>\nWe will update you as soon as we have new information. If you have any questions please don't hesitate to contact us\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter amount offered here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "64268d329ef9036e1976fe8b"
+  },
+  "name": "PRIVATE | Internal | New Listing Created | Listing Form",
+  "template": "Hey,\n<br/>\n<br/>\nA Private Land Auction Listing has been created by {{name}}\n<br/>\nListing Address: {{address}}\n<br/>\n<br/>\nListing: <a href='https://carolinalandexperts.retool.com/apps/3db9ef94-ec02-11ee-b707-83c744a94c66/Single%20Listing%20App?listingID={{rowId}}'>Link</a>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "rowId",
+      "description": "Enter rowId here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "address",
+      "description": "Enter address here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642c10ce938fa95c1e166693"
+  },
+  "name": "PRIVATE | Counter Link | Auction Form",
+  "template": "Hello {{name}},\n<br/><br/>\nOops! It looks like you've already made an offer on this property. In order to change your offer please see the {{{counterLink}}} or edit through your members portal.\n<br>The highest active bid is ${{highestActiveBid}}. The window for placing bids ends on {{offerWindowEndDate}}.\n<br/><br/>\nThank you\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the seller and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "counterLink",
+      "description": "Enter counter link here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "highestActiveBid",
+      "description": "Enter highestActiveBid here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "offerWindowEndDate",
+      "description": "Enter offerWindowEndDate here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d03db938fa95c1e166694"
+  },
+  "name": "PRIVATE | Offer Cannot be Accepted | Auction Form",
+  "template": "Hello {{name}}, <br>Your offer on {{listingAddress}}cannot be accepted as the deadline for offers has passed.\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the Seller and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "listingAddress",
+      "description": "Enter listingAddress here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642e682d938fa95c1e166698"
+  },
+  "name": "PRIVATE | 3D Complete Stage | Listing Updated",
+  "template": "Hello {{name}}, \n\nGreat news! your pre-listing inspections and imagery are complete and you will have an EasyDigz agent reaching out to you soon for a final review of your property before us putting it on the market and getting it sold!",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401be8a99d6c059c55592c8"
+  },
+  "name": "NCDOT | Board Review Stage - Thankyou for placing bid  | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nThank you for placing a bid on NCDOT #{{ncdot}}: for ${{amountOffered}}. The Board of Transportation has reviewed your contract package and has decided to move forward with the sell of this property. \n <br/><br/>\nSome properties will require additional review by the NC Council of State prior to final approval. That will require an additional 30-60 days. Once we have final approval, the Attorney General's office will take over and get the deed recorded for the property owner. This can take up to 45-60 days depending on when we have final approval.\n <br/><br/>\n<b>Please note, if the NCDOT is not able to approve and complete the sale your earnest money will be returned to you.</b>\n <br/><br/>\nWe will update you as soon as we have new information. If you have any questions please don't hesitate to contact us.\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\n\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter amount offered here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401cda899d6c059c55592cf"
+  },
+  "name": "NCDOT | Counter Offer - Final Counter Offer received",
+  "template": "Hello {{name}}, <br>Your <b>Final</b> counter offer for NCDOT : {{ncdot}} has been received.\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d17b69ef9036e1976fe8c"
+  },
+  "name": "PRIVATE | Auction Submitted | Auction Form",
+  "template": "Hello {{name}},\n\nThank you for submitting a bid on {{listingAddress}} for {{for}}. You will be notified when the highest active offer amount changes and in the same email you will be able to augment your bid if you wish. As a note, a 1% increase is the minimum required amount.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "listingAddress",
+      "description": "Enter listingAddress here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "for",
+      "description": "Enter for here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642e5f9a9ef9036e1976fe95"
+  },
+  "name": "PRIVATE | Initial Invoice Stage | Listing Updated",
+  "template": "Hello {{name}},\n\nAs discussed on our call, we have sent you an email via Quickbooks. Please review and if you have questions, we are here to help. If marketing material assistance is requested, we will send you a scheduler via email.\n\nWe look forward to working with you and thank you for choosing the Carolina Land Experts Team!",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6467ca5d783fbb486b23af91"
+  },
+  "name": "EASYDIGZ | Opportunity Updated - Stage Under Contract",
+  "template": "Congratulations! Your hard work and patience has paid off and you are now officially under contract to buy {{address}}! We are here for you every step of the way so feel free to reach out with any questions you may have. \n<br><br>\nNext, we will be scheduling the home inspection and closing attorney so stay on the lookout for information regarding these. \n<br><br>\nTalk soon,<br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "address",
+      "description": "Enter address here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "646b157b783fbb486b23af94"
+  },
+  "name": "EASYDIGZ | Listing Updated - Stage Agent Reviewed",
+  "template": "<p>Hello {{name}}, as discussed on our call, we have sent you the listing documents for electronic signature. Please review the documents and if you have questions, we are here to help. Once the documents are signed we will get the 3D Tour, Pre-Inspection and Photography scheduled. Also, look out for an invoice from Quickbooks for our initial fee. <br><br>We look forward to working with you and thank you for choosing the EasyDigz Team!</p>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401c0ba99d6c059c55592ca"
+  },
+  "name": "NCDOT | Internal | Board Review Stage - Update MLS  | Opportunity Updated",
+  "template": "Hello,\n <br/>\n This is a system reminder to update the status of the above mentioned opportunity in MLS.\n<br/>\nOpportunity <a href='https://carolinalandexperts.retool.com/apps/a6d260f4-6f18-11ee-a0fc-87eeef82690c/Single%20Opportunity%20App?opportunityID={{rowID}}'>Link</a>\nDotloop <a href='{{dotloopLink}}'>Link</a>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "rowID",
+      "description": "Enter row ID here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "dotloopLink",
+      "description": "Enter dotloop link here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d5aca938fa95c1e166697"
+  },
+  "name": "PRIVATE | Multiple Offer Stage  | Opportunity Updated",
+  "template": "Hello {{name}},\n<br/><br/>\nThis is a notification regarding your bid on{{listingAddress}}, MLS Number: {{mlsNumber}} We have now received multiple bids on this property.  The highest active bid is ${{highestActiveBid}}. The window for placing bids ends on {{offerEndDate}}. If the highest bid is upset in the final hour of the bidding window, the bidding time is extended by one hour with a maximum of 12 upsets. We will announce the winner within 24 hours of auction close.\n<br/>\n{{{currentHighestActiveBid}}}\n<br/><br/>\nTo be considered by the Seller, the highest bidding price must be upset by at least 1%. <br/>If you wish to alter your bid please respond via {{{counterLink}}} with your Highest and Best bid amount.\n<br/><br/>\nThank you\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the Seller and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "listingAddress",
+      "description": "Enter listingAddress here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "mlsNumber",
+      "description": "Enter mlsNumber here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "highestActiveBid",
+      "description": "Enter highestActiveBid here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "offerEndDate",
+      "description": "Enter offerEndDate here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "currentHighestActiveBid",
+      "description": "Enter currentHighestActiveBid here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "counterLink",
+      "description": "Enter counterLink here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "643681e79ef9036e1976fe99"
+  },
+  "name": "PRIVATE | Initial Invoice Paid Stage | Listing Updated",
+  "template": "Hello {{name}} ,\n<br/><br/>\nThank you for your buyer premium payment for {{listingAddres}}\n<br/><br/>\nWe will update you as soon as we have new information. If you have any questions please don't hesitate to contact us.\n <br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<u>Please note</u>, We represent the Seller and not the purchaser in this transaction. \n<br/><br/>\nCarolina Land Experts<br/>\n919-275-5868\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "listingAddres",
+      "description": "Enter listingAddres here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6467dc41783fbb486b23af92"
+  },
+  "name": "EASYDIGZ | Opportunity Updated - Stage Due Dillegence",
+  "template": "Hello again {{name}}, \n<br><br>\nIt looks like we are about to cross another item off of our list. Your Due Diligence period is about to end which means you have completed all of the due diligence necessary to safely move forward with the purchase of this property. This includes but is not limited to; all inspections, surveys, appraisals, walk throughs, estimates, lending and other items you would like to have done in order to make sure this is the right home for you. \n<br><br>\nThis also means we are getting closer to closing on this home and moving! Our agents will be in touch with you from now through closing to make sure all of the loose ends are taken care of. \n<br><br>\nAs always, let us know if you need anything at all. \n\n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "646b30a0783fbb486b23af98"
+  },
+  "name": "EASYDIGZ | Listing Updated - Stage Sold",
+  "template": "Hello {{name}}, \n\nCongratulations! we may we made it. Thank you so much for using easy digz. We look forward to serving you in the future, please let us know how we did, and as always, tell your friends how much money you saved and how great your experience was!",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401cf00197f7140a98e29ce"
+  },
+  "name": "NCDOT | Counter Offer - Counter Offer Recieved",
+  "template": "Hello {{name}}, <br>Your counter offer for NCDOT : {{ncdot}} has been received.<br>\nOld Amount :{{oldAmountOffered}}<br>\nNew Amount: {{newAmountOffered}} <br>\n<br>\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "oldAmountOffered",
+      "description": "Enter old amount offered here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "newAmountOffered",
+      "description": "Enter new amount offered here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d71ae9ef9036e1976fe91"
+  },
+  "name": "PRIVATE | Closed Lost Stage - Offer Withdrawn | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nThis is a notification that your offer on NCDOT remnant property has been withdrawn.\n <br/><br/>\n <br/><br/>\nRegards, <br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "646b1f69783fbb486b23af97"
+  },
+  "name": "EASYDIGZ | Listing Updated - Stage 3D Complete",
+  "template": "Hello {{name}}, \n<br><br>\n3D photography and pre-inspection has been completed\n<br><br>\nThis is an exciting moment in the sale of your awesome home! Your 3D tour and Pre-Inspection have been completed and are available on your portal. Your assigned agent will contact you soon to walk through your listing with you and review everything prior to making your listing live!",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401a8406239cc738887ff4a"
+  },
+  "name": "NCDOT | Closed Won Stage - Deed is Ready | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nThank you for purchasing NCDOT #: {{ncdot}}.A copy of the recorded deed will be emailed to you shortly.\n\n<br><br>\nWe appreciate the opportunity to help you purchase a remnant property from the State of North Carolina.\n<br><br>\nIf you ever have any questions, do not hesitate to reach out. \n<br><br>\nWe sincerely appreciate you doing business with us. Would you mind taking a minute to give us five stars on Google?\n<a href=\"https://g.page/r/CXnZBDhlF--LEAI/review\">Click here to give us five stars!</a>\n<br><br>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n<br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401ccbb197f7140a98e29cd"
+  },
+  "name": "NCDOT | Counter Offer - Deadline passed for offer",
+  "template": "Hello {{name}}, <br>Your counter offer for NCDOT : {{ncdot}} cannot be accepted as the deadline for offers has passed.\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642e98da9ef9036e1976fe97"
+  },
+  "name": "PRIVATE | Counter Offer | Auction Counter Offer",
+  "template": "Buyer Email: {{email}}<br>\nSelling Agent : {{sellingAgentEmail}}<br>\nHello {{name}}, <br>Your counter offer for NCDOT : {{ncdot}} has been received.<br> Old Amount : {{oldAmountOffered}}<br> New Amount: {{newAmountOffered}} <br> <br> <br/><br/> <b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b> <br/><br/> <b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/> Carolina Land Experts<br/> 919-275-5868<br/> <br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "oldAmountOffered",
+      "description": "Enter old amount offered here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "newAmountOffered",
+      "description": "Enter new amount offered here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "64678cd0d8c7eb6f388fd071"
+  },
+  "name": "EASYDIGZ | Opportunity Updated - Stage Created",
+  "template": "Hello {{name}},\n<br><br>\nThank you for creating your account at EasyDigz.com. Have fun on the site and remember to reach out to us if you have any questions. \n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401a9b33ff5e33480c76bdc"
+  },
+  "name": "NCDOT | Internal | Closed Won Stage - Update MLS | Opportunity Updated",
+  "template": "Hello,\n <br/>\n This is a system reminder to update the status of the above mentioned opportunity in MLS.\n<br/>\nOpportunity <a href='https://carolinalandexperts.retool.com/apps/a6d260f4-6f18-11ee-a0fc-87eeef82690c/Single%20Opportunity%20App?opportunityID={{rowID}}'>Link</a>\nDotloop <a href='{{dotloopLink}}'>Link</a>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "rowID",
+      "description": "Enter row ID here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "dotloopLink",
+      "description": "Enter dotloop link here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401a2cc6239cc738887ff49"
+  },
+  "name": "NCDOT | Internal | Attorney General Stage - Update MLS | Opportunity Updated",
+  "template": "This is a system reminder to update the status of a recently closed opportunity in MLS.\nOpportunity <a href='https://carolinalandexperts.retool.com/apps/a6d260f4-6f18-11ee-a0fc-87eeef82690c/Single%20Opportunity%20App?opportunityID={{rowID}}'>Link</a>\nDotloop <a href='{{dotloopLink}}'>Link</a>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "rowID",
+      "description": "Enter row ID here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "dotloopLink",
+      "description": "Enter dotloop link here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "640193c23ff5e33480c76bd8"
+  },
+  "name": "NCDOT | Qualification Stage - isDirty True | Opportunity Updated",
+  "template": "Hello {{name}},\n<br/><br/>\nYour bid of {{bidAmount}} has now been received. The window for placing bids ends on {{offerEndDate}} <br/><br/>\n If there are multiple bids we will contact all parties via email each time the highest active bid amount increases. You will be able to alter your bid amount via said multiple offer notification. To be considered by NCDOT management the highest bidding price must be upset by at least 5%.\n<br/><br/>\nIf the highest bid is upset in the final hour of the bidding window, the bidding time is extended by one hour with a maximum of 12 upsets. \n<br/><br/>\nThe highest bid, if accepted, will submit a <b>non-refundable</b> buyer premium of {{auctionBuyerRate}} of bid amount or {{auctionFixedRate}}, whichever is greater to Carolina Land Experts. Payment instructions will be sent along with notification of winning bid within 24 hours of auction closing.\n<br/><br/>\nAfter the buyer premium is paid you will receive an electronic offer package consisting of the NC Offer to purchase, Working with Real Estate Agents brochure and the NCDOT addendum for your review and electronic signature\n<br/><br/>\nAfter signed contract packages have initial acceptance, NCDOT Board approval and in some cases Council of State approval, the Attorney General's office will record the deed for the property owner. This can take up to 45-60 days depending on when we have final approval.\n<br/><br/>\n<b>Please note, buyer premium is non-refundable for any circumstance.</b>\n <br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<u>Please note</u>, We represent the NCDOT and not the purchaser in this transaction. \n<br/><br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "bidAmount",
+      "description": "Enter bid amount here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "offerEndDate",
+      "description": "Enter offer end date here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "auctionBuyerRate",
+      "description": "Enter auction buyer rate here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "auctionFixedRate",
+      "description": "Enter auction fixed rate here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "640195b76239cc738887ff47"
+  },
+  "name": "NCDOT | Reception Stage - High bid notification | Opportunity Updated",
+  "template": "Hello {{name}},\n<br/><br/>\nYou have the highest bid on NCDOT Asset# {{ncdotAsset}} for ${{amountOffered}}.\n <br/><br/>\nIn order for us to present your bid to the NCDOT for initial acceptance you must submit payment for your non-refundable buyer premium in the amount of ${{buyerPremiumFormulae}}. This payment is in addition to the purchase price. You will now receive an invoice via email from Quickbooks with links for payment options. Payment is due within 72 hours of this notice.\n<br/><br/>\nAfter the non-refundable buyer premium is paid a contract package will be sent to you for electronic signature. Once signed, the contract package will be sent to the NCDOT for initial acceptance.\n<br/><br/>\nWithin 60 days of initial acceptance, the matter will go before the NCDOT Board for review and approval.\n<br/><br/>\nSome properties will require additional review by the NC Council of State prior to final approval. That will require an additional 30-60 days. Once we have final approval, you will receive an email with a request for final payment and a copy of the preliminary deed. After NCDOT receives the final payment, the Attorney General's office will take over and get the deed recorded for the property owner. This can take up to 45-60 days depending on when we have final approval.\n<br/><br/>\nWe will update you as soon as we have new information. If you have any questions please don't hesitate to contact us.\n<br/><br/>\n <b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. \n<br/><br/>\nCarolina Land Experts<br/>\n919-275-5868\n",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "ncdotAsset",
+      "description": "Enter ncdot asset here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter amount offered here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "buyerPremiumFormulae",
+      "description": "Enter buyer premium formulae here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401997b3ff5e33480c76bd9"
+  },
+  "name": "NCDOT | Multiple Offer Stage - Multiple Bid | Opportunity Updated",
+  "template": "Hello  {{name}},\n<br/><br/>\nThis is a notification regarding your bid on NCDOT remnant property # {{ncdotAsset}}. We have now received multiple bids on this property.  The highest active bid is ${{highestBid}}. The window for placing bids ends on {{offerEndDate}}. If the highest bid is upset in the final hour of the bidding window, the bidding time is extended by one hour with a maximum of 12 extensions. We will announce the winner within 24 hours of auction close.\n<br/>\n{{conditionIfHighest}}<br/><br/>\nTo be considered by NCDOT management the highest bidding price must be upset by at least 5%. <br/>If you wish to alter your bid please respond via {{{counterOfferLink}}} with your Highest and Best bid amount.\n<br/><br/>\nThank you\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "highestBid",
+      "description": "Enter highest bid here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "offerEndDate",
+      "description": "Enter offer end date here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "conditionIfHighest",
+      "description": "Enter condition if offer is highest here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "counterOfferLink",
+      "description": "Enter counter offer link here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdotAsset",
+      "description": "Enter ncdotAsset here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401ca7899d6c059c55592cd"
+  },
+  "name": "NCDOT | Counter Offer - Possible Discrepancy",
+  "template": "<b>The received amount is less than the highest bid amount in GIS</b>\nHello {{name}}, <br>Your counter offer for NCDOT : {{ncdot}} has been received.<br>\nOld Amount :{{oldAmountOffered}}<br>\nNew Amount: {{newAmountOffered}} <br>\n<br>\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "oldAmountOffered",
+      "description": "Enter old amount offered here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "newAmountOffered",
+      "description": "Enter new amount offered here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d41cc9ef9036e1976fe8e"
+  },
+  "name": "PRIVATE | Qualification Stage - isDirty True | Opportunity Updated",
+  "template": "Hello {{name}},\n<br/><br/>\nYour bid of {{amountOffered}} has now been received. The window for placing bids ends on {{offerWindowEndDate}}\n <br/><br/>\nIf there are multiple bids we will contact all involved parties requesting Highest and Best bids. To be considered by the Seller the highest bidding price must be upset by at least 1%.\n<br/><br/>\nIf the highest bid is upset in the final hour of the bidding window, the bidding time is extended by one hour with a maximum of 12 upsets. \n<br/><br/>\nThe highest bid, if accepted, will submit their <b>non-refundable</b> buyer premium in the amount of $200 or 10% of bid amount, whichever is greater. Payment instructions will be sent along with notification of high winning bid.\nThe highest bid, if accepted, will submit a buyer premium of 10% of bid amount or $200, whichever is greater to Carolina Land Experts. Payment instructions will be sent along with notification of winning bid within 24 hours of auction closing.\n<br/><br/>\nAfter the buyer premium is paid You will be sent an offer package for signatures that will be sent to the Seller.Once we have initial acceptance or counter of the highest bid by the Seller we will send a completed contract package for your records.\n<br/><br/>\n<b>Please note, buyer premium is non-refundable for any circumstance.</b>\n <br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<u>Please note</u>, We represent the Seller and not the purchaser in this transaction. \n<br/><br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter amountOffered here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "offerWindowEndDate",
+      "description": "Enter offerWindowEndDate here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642e9e74938fa95c1e16669b"
+  },
+  "name": "PRIVATE | Counter Offer - Final Counter Offer received",
+  "template": "Hello {{name}}, <br>Your <b>Final</b> counter offer for NCDOT : {{ncdot}} has been received.\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642ea01e938fa95c1e16669c"
+  },
+  "name": "PRIVATE | Counter Offer - Counter Offer Recieved",
+  "template": "Hello {{name}}, <br>Your counter offer for NCDOT : {{ncdot}} has been received.<br>\nOld Amount :{{oldAmountOffered}}<br>\nNew Amount: {{newAmountOffered}} <br>\n<br>\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "oldAmountOffered",
+      "description": "Enter old amount offered here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "newAmountOffered",
+      "description": "Enter new amount offered here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401bbe8197f7140a98e29c7"
+  },
+  "name": "NCDOT | Closed Lost Stage - Rejection Notice | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nYour transaction for NCDOT # {{ncdot}} has been terminated. \n <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "640f2a640bcf656aca9e3612"
+  },
+  "name": "NCDOT | Quickbooks - Payment Received",
+  "template": "Hello {{name}},\n<br/><br/>\nThank you for your buyer premium payment for NC DOT Asset # {{ncdot}}\n<br/><br/>\nWe will now submit to you a contract package for electronic signature via Dotloop. Once you are under contract  the matter then goes before the NC DOT Board for review. This will occur within the next 60 days. Some properties will require additional review by the NC Council of state prior to final approval. That will require an additional 30-60 days. Once we have final approval, the Attorney General's office will take over and get the deed recorded for the property owner. This can take up to 45-60 days depending on when we have final approval.\n<br/><br/>\nWe will update you as soon as we have new information. If you have any questions please don't hesitate to contact us.\n <br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<u>Please note</u>, We represent the NCDOT and not the purchaser in this transaction. \n<br/><br/>\nCarolina Land Experts<br/>\n919-275-5868\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "64268bc49ef9036e1976fe8a"
+  },
+  "name": "PRIVATE | New Listing Created | New Listing Form",
+  "template": "Hello {{name}},\n<br/><br/>\nThank you for choosing Carolina Land Experts to assist you in the auction of your land. An agent will contact you to review your listing and walk you through our process. \n<br/><br/>\nWe look forward to serving you,\n<br/><br/>\n-Carolina Land Experts Team\n \n",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6467c718783fbb486b23af8f"
+  },
+  "name": "EASYDIGZ | Opportunity Updated - Stage Qualification",
+  "template": "<p>Hi again {{name}},<br><br>Thank you very much for reviewing the information with our licensed real estate agent. We are working hard to get your offer together and will be sending all of the paperwork to you via email very soon for your electronic signature. Once this happens we will be submitting the offer to the seller or sellers agent on your behalf. <br><br>We will talk with you very soon!<br><br><br><b>EasyDigz Team</b><br>919-275-5868<br><a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br></p>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "646b1d95783fbb486b23af96"
+  },
+  "name": "EASYDIGZ | Listing Updated - Stage Listing Live",
+  "template": "And drum roll please!!!! Your Listing is now live for all to see! \n<br><br>\nYep, that is right, your listing is being marketed to hundreds of websites, the local MLS and to buyers that have requested early access to listings through our site! This is what we have all been waiting for. \n<br><br>\nBe sure to keep a close eye on your emails and phone for questions we may have or information we need to share. \n<br><br>\nHere’s to a perfect contract soon!",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "646b386f783fbb486b23af99"
+  },
+  "name": "EASYDIGZ | Listing | Send Inspection Event - Cannot Resubmit",
+  "template": "You cannot resubmit this form. If you wish to reschedule the inspection modify the calendar event sent to you or you can reschedule the event by contacting us.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d78a39ef9036e1976fe93"
+  },
+  "name": "PRIVATE | Buyer Premium Stage | Opportunity Updated",
+  "template": "Hello {{name}} ,\n<br/><br/>\nThank you for your buyer premium payment for {{listingAddres}}\n<br/><br/>\nWe will update you as soon as we have new information. If you have any questions please don't hesitate to contact us.\n <br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<u>Please note</u>, We represent the Seller and not the purchaser in this transaction. \n<br/><br/>\nCarolina Land Experts<br/>\n919-275-5868\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "listingAddres",
+      "description": "Enter listingAddres here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "646787f7d8c7eb6f388fd070"
+  },
+  "name": "EASYDIGZ | Buy Now Form - New Opportunity Created",
+  "template": "Hello {{name}}, \n<br><br>\nThank you for making an offer using EasyDigz. If you have any questions please do not hesitate to reach out. Our office is available any time at 919-275-5868\n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "646b1b1c783fbb486b23af95"
+  },
+  "name": "EASYDIGZ | Listing Updated - Stage Initial Invoice Sent",
+  "template": "Hello {{name}},\n\nAs discussed on our call, we have sent you the listing documents for electronic signature. Please review the documents and if you have questions, we are here to help. Once the documents are signed we will get the 3D Tour, Pre-Inspection and Photography scheduled. Also, look out for an invoice from Quickbooks for our initial fee. \n\nWe look forward to working with you and thank you for choosing the EasyDigz Team!",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "646dc0d4783fbb486b23af9b"
+  },
+  "name": "EASYDIGZ | Listing | Quickbooks - Initial Invoice Paid",
+  "template": "Hello {{name}},\n<br><br>\n Congratulations on taking your first step to selling  your home selling with Easy Digz. Welcome to a seamless and rewarding experience!\n<br><br>\nSelling your home is a significant step, and we're here to ensure it's as smooth and successful as possible. Our platform is designed to streamline the process, making it easy for you to manage everything from listing to closing. Remember, our team is always here to support you at every stage.\n<br><br>\nHere are a few things to keep in mind as we move forward:\n<br><br>\n1. <b>Preparation is Key</b>: Make sure your home is in its best shape. Simple improvements like decluttering and a fresh coat of paint can make a big difference.\n<br><br>\n2. <b>Stay Informed</b>: Keep an eye on your Easy Digz dashboard for updates and insights on your listing's performance.\n<br><br>\n3. <b>Be Responsive</b>: Potential buyers might have questions. Prompt responses can keep the momentum going and show your commitment to the sale.\n<br><br>\n4. <b>Utilize Our Resources</b> Our <a href=\"https://blog.easydigz.com/\">blog</a> is a treasure trove of tips and tricks for sellers. Take advantage of these insights to enhance your selling experience.\n<br><br>\nRemember, you're not alone in this journey. Our team of experts is just a call or email away, ready to assist you with any questions or guidance you may need.\n<br><br>\nWe're excited to be a part of your journey to sell your home. Thank you for choosing Easy Digz, where we make selling homes straightforward and stress-free.\n<br><br>\nWarm regards,\n<br><br><br>\n<a href=\"www.easydigz.com\"> EasyDigz<a/><br>\n509 W North st Raleigh NC <br>\n919.275.5868 <br>\nNCREL#C34055 <br>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": true,
+      "default_value": "John"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "64018de56239cc738887ff45"
+  },
+  "name": "NCDOT | Offer Cannot be Accepted - Dead line passed | Auction Form",
+  "template": "Hello {{name}}, <br>Your offer for NCDOT : {{ncdotAsset}} cannot be accepted as the deadline for offers has passed.\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "ncdotAsset",
+      "description": "Enter name here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401c1d8197f7140a98e29ca"
+  },
+  "name": "NCDOT | Under Contract Stage | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nThank you for placing a bid on NCDOT {{ncdot}} for ${{amountOffered}}.\n <br/><br/>\nThe NCDOT has signed your contract package and your bid now has initial approval.\n <br/><br/>\n Within 60 days of initial approval the matter will go before the NCDOT Board for review and final approval.\n <br/><br/>\n Some properties will require additional review by the NC Council of State prior to final approval. That will require an additional 30-60 days. After NCDOT receives the final payment, you will receive an email with a request for final payment and a copy of the preliminary deed. Once we have final approval, the Attorney General's office will take over and get the deed recorded for the property owner. This can take up to 45-60 days depending on when we have final approval.\n <br/><br/>\n We will update you as soon as we have new information. If you have any questions please don't hesitate to contact us.\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868\n",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter amount offered here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d4713938fa95c1e166695"
+  },
+  "name": "PRIVATE | Reception Stage | Opportunity Updated",
+  "template": "Hello {{name}},\n<br/><br/>\nYou have the highest bid on {{listingAddress}}, MLS Number: {{mlsNumber}} for ${{amountOffered}}.\n <br/><br/>\nIn order for us to present your bid to the Seller for initial acceptance you must submit payment for your non-refundable buyer premium in the amount of ${{buyerPremiumFormulae}}. You will now receive an invoice via email from Quickbooks with links for payment options.\n<br/><br/>\nAfter the non-refundable buyer premium is paid a contract package will be sent to you for electronic signature. Once signed, the contract package will be sent to the Seller for initial acceptance.\n<br/><br/>\nWe will update you as soon as we have new information. If you have any questions please don't hesitate to contact us.\n<br/><br/>\n <b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the Seller and not the purchaser in this transaction. \n<br/><br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "listingAddress",
+      "description": "Enter listingAddress here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "mlsNumber",
+      "description": "Enter mlsNumber here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter amountOffered here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "buyerPremiumFormulae",
+      "description": "Enter buyerPremiumFormulae here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d6b149ef9036e1976fe8f"
+  },
+  "name": "PRIVATE | Closed Won Stage  | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nThank you for purchasing {{listingAddress}}.\n<br><br>\nWe appreciate the opportunity to assist you.\n<br><br>\nIf you ever have any questions, do not hesitate to reach out. \n<br><br>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n<br/><br/>\n<b><u>Please note</u></b>, We represent the Seller and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "listingAddress",
+      "description": "Enter listingAddress here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642e68c8938fa95c1e166699"
+  },
+  "name": "PRIVATE | Sold Stage | Listing Updated",
+  "template": "Hello {{name}}\n<br/><br/>\nCongratulations! we made it. Thank you so much for using easy digs. We look forward to serving you in the future. please let us know how we did, and as always tell your friends how much money you saved and how great your experience was!",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "646b0da0d8c7eb6f388fd073"
+  },
+  "name": "EASYDIGZ | Listing Updated - Stage Created",
+  "template": "Hello {{name}},\n<br/><br/>\nThank you for creating an account and listing with EasyDigz! One of our Agents will review your listing and call you soon to discuss next steps.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401bcdd197f7140a98e29c8"
+  },
+  "name": "NCDOT | Closed Lost Stage - Offer Withdrawn | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nThis is a notification that your offer on NCDOT remnant property has been withdrawn.\n <br/><br/>\n <br/><br/>\nRegards, <br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6401c371197f7140a98e29cb"
+  },
+  "name": "NCDOT | Buyer Premium Stage - Payment Recieved | Opportunity Updated",
+  "template": "Hello {{name}} ,\n<br/><br/>\nThank you for your buyer premium payment for NCDOT Asset # {{ncdot}}\n<br/><br/>\nWe will now submit to you a contract package for electronic signature via Dotloop.Please ensure the name for the deed in paragraph 8 is accurate. This cannot be changed once under contract. \n Once you are under contract  the matter then goes before the NCDOT Board for review. This will occur within the next 60 days. Some properties will require additional review by the NC Council of State prior to final approval. That will require an additional 30-60 days. Once we have final approval, you will receive an email with a request for final payment and a copy of the preliminary deed.\n After NCDOT receives the final payment, the Attorney General's office will take over and get the deed recorded for the property owner. This can take up to 45-60 days depending on when we have final approval.\n<br/><br/>\nWe will update you as soon as we have new information. If you have any questions please don't hesitate to contact us.\n <br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<u>Please note</u>, We represent the NCDOT and not the purchaser in this transaction. \n<br/><br/>\nCarolina Land Experts<br/>\n919-275-5868\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "642d75009ef9036e1976fe92"
+  },
+  "name": "PRIVATE | Under Contract Stage | Opportunity Updated",
+  "template": "Hello {{name}},\n <br/><br/>\nThank you for placing a bid on {{listingAddress}} for ${{amountOffered}}.\n <br/><br/>\nThe Seller has signed your contract package, you are now under contract\n <br/><br/>\n We will update you as soon as we have new information. If you have any questions please don't hesitate to contact us.\n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n <br/><br/>\n<b><u>Please note</u></b>, We represent the Seller and not the purchaser in this transaction. <br/><br/>\nCarolina Land Experts<br/>\n919-275-5868",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "listingAddress",
+      "description": "Enter listingAddress here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "amountOffered",
+      "description": "Enter amountOffered here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "64678e73d8c7eb6f388fd072"
+  },
+  "name": "EASYDIGZ | Opportunity Updated - Stage Agent Reviewed",
+  "template": "Hello {{name}}, \n<br><br>\nThank you very much for making an offer on {{address}}.  Our licensed real estate agent is reviewing the paperwork and will reach out to you via phone in the next 60 minutes. \n<br><br>\nFeel free to call or email with any questions. \n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "address",
+      "description": "Enter address here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6656ab18adf83f4348d2ed78"
+  },
+  "name": "NCDOT | Auction Form | Bid Cannot be Accepted",
+  "template": "Hello {{name}},\n<br/><br/>\nYour offer of {{bidAmount}} for NCDOT # {{ncdot}} was not accepted because it did not exceed the current high bid by at least 5%. \n<br/><br/>\nPlease return to the listing page for NCDOT Asset # {{ncdot}} and submit a bid for at least 5% more than the current high bid shown there. \n<br/><br/>\nRefresh the listing page to ensure you are seeing the most current high bid. \n<br/><br/>\n<b>See <a href='www.carolinalandexperts.com'>www.carolinalandexperts.com</a> for more information on the purchase process.</b>\n<br/><br/>\n<b><u>Please note</u></b>, We represent the NCDOT and not the purchaser in this transaction. <br/><br/>\n<br/><br/>\nCarolina Land Experts\n<br/><br/>\n919-275-5868\n<br/>\n<br><br><span style='color:#990000;'><b>Please Note:</b></span> The Covid-19 situation may cause unwanted delays in approvals of contracts by the State of North Carolina and the recording of deeds. Please be patient with us during this time and know that we are committed to providing you timely information regarding your transaction.",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "name",
+      "description": "Enter name here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "bidAmount",
+      "description": "Enter bidAmount here",
+      "required": false
+    },
+    {
+      "type": "string",
+      "title": "ncdot",
+      "description": "Enter ncdot here",
+      "required": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66a9ce480f7c3c73f5a9bd37"
+  },
+  "name": "NCDOT | Agent Qualification Email | Opportunity Updated",
+  "template": " We're writing to confirm that a bid has been successfully submitted on\n    behalf of {{clientName}} for the following property:\n    <br />\n    Property Details:\n    <ul>\n      <li>Address: {{propertyAddress}}</li>\n      <li>Listing ID: {{listingId}}</li>\n      <li>Current Bid Amount: {{bidAmount}}</li>\n    </ul>\n    Next Steps:\n    <ol>\n      <li>Review the bid details with your client to ensure accuracy.</li>\n      <li>Monitor your email for updates on the auction status.</li>\n      <li>Advise your client to be prepared for potential counterbids.</li>\n    </ol>\n    Important Information: <br />\n    <ul>\n      <li>Auction Closing Date: {{offerEndDateAndTime}}</li>\n      <li>Minimum Bid Increment: {{minimumBidIncrement}}</li>\n      <li>Current Bid Status: {{highestActiveBid}}</li>\n    </ul>\n    Please note that the auction will remain open until the closing date\n    mentioned above. During this time, other potential buyers may submit higher\n    bids. We encourage you to stay engaged with the auction process and consider\n    increasing your bid if necessary. The counteroffer links will be sent to\n    {{buyerEmail}} please monitor for updates. You will be copied on all emails\n    if they are the high bidder. If you have any questions or need further\n    assistance, please don't hesitate to contact our support team at\n    <a href=\"mailto:support@carolinalandexperts.com\"\n      >support@carolinalandexperts.com</a\n    >\n    or \n    <a href=\"tel:+9192755868\">(919)2755868</a></p>\n    <br />\n    Thank you for using Carolina Land Experts for your real estate needs. We\n    wish you and your client the best of luck in this auction! Best regards,\n    <br /><br />\n    <b\n      >See\n      <a href=\"www.carolinalandexperts.com\">www.carolinalandexperts.com</a> for\n      more information on the purchase process.</b\n    >\n    <br /><br />\n    <b><u>Please note</u></b\n    >, We represent the NCDOT and not the purchaser in this transaction.\n    <br /><br />\n    Carolina Land Experts<br />\n    919-275-5868<br />",
+  "variable_input_schema": [
+    {
+      "type": "string",
+      "title": "clientName",
+      "description": "Enter clientName here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "propertyAddress",
+      "description": "Enter propertyAddress here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "listingId",
+      "description": "Enter listingId here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "bidAmount",
+      "description": "Enter bidAmount here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "offerEndDateAndTime",
+      "description": "Enter offerEndDateAndTime here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "minimumBidIncrement",
+      "description": "Enter minimumBidIncrement here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "highestActiveBid",
+      "description": "Enter highestActiveBid here",
+      "required": false,
+      "default_value": " "
+    },
+    {
+      "type": "string",
+      "title": "buyerEmail",
+      "description": "Enter buyerEmail here",
+      "required": false,
+      "default_value": " "
+    }
+  ]
+}]
