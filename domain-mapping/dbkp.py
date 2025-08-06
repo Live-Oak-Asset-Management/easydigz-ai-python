@@ -1,25 +1,45 @@
+import sys
 import os
 import subprocess
 import pymysql
 from datetime import datetime
 from urllib.parse import urlparse
+from dotenv import load_dotenv
+
+# Path to .env in same folder as this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+env_path = os.path.join(script_dir, '.env')
+
+if not os.path.exists(env_path):
+    raise FileNotFoundError(f"env file not found at: {env_path}")
+
+load_dotenv(dotenv_path=env_path)
 
 # === DB CONFIGURATION ===
 DB_CONFIG = {
-    'host': 'stage-cle-ezd-noco-retool.cktfz7cqhztl.us-east-1.rds.amazonaws.com',
-    'database': 'EasyDigz',
-    'user': 'admin',
-    'password': 'Sample!12345:asasa',
-    'port': 3306
+    'host': os.getenv('DB_HOST'),
+    'database': os.getenv('DB_NAME'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'port': int(os.getenv('DB_PORT', 3306))  # default to 3306 if missing
 }
 
 BACKUP_DIR = './backups'
 TABLE_NAME = 'domain_agent_mapping'
 
 # === DOMAIN & INSERT DATA ===
-input_domain = "https://custom.ideafoundation.in"
-agent_id = "107649577889983698871"
+#input_domain = "https://custom.ideafoundation.in"
+#agent_id = "6879effb54bd87bdfe2c5022"
 is_active = 1
+
+# === STEP: Get domain and agent_id from CLI args or prompt ===
+if len(sys.argv) > 2:
+    input_domain = sys.argv[1].strip()
+    agent_id = sys.argv[2].strip()
+else:
+    input_domain = input("Enter your custom domain (e.g., portal.domain.com): ").strip()
+    agent_id = input("Enter the agent ID: ").strip()
+
 
 # === STEP 1: Clean Domain ===
 def clean_domain(url):

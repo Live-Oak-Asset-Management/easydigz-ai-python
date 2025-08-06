@@ -4,20 +4,40 @@ import time
 import dns.resolver
 import boto3
 from cloudflare import Cloudflare
+import sys
+from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 
-###STAGING-LB
-LISTENER_ARN = "arn:aws:elasticloadbalancing:us-east-1:305746409606:listener/app/test-lb-easydigz/38b94f60ee771160/dcba512079fbd6e5" 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+env_path = os.path.join(script_dir, '.env')
 
-EXISTING_RULE_ARN = "arn:aws:elasticloadbalancing:us-east-1:305746409606:listener-rule/app/test-lb-easydigz/38b94f60ee771160/dcba512079fbd6e5/6b449b73a067f357"
+if not os.path.exists(env_path):
+    raise FileNotFoundError(f"env file not found at: {env_path}")
 
+load_dotenv(dotenv_path=env_path)
+### STAGING-LB
+LISTENER_ARN = os.getenv("LISTENER_ARN")
+EXISTING_RULE_ARN = os.getenv("EXISTING_RULE_ARN")
+# AWS credentials (STAGING)
+AWS_REGION = os.getenv("AWS_REGION")
+AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
+AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
 
-ezd_zone_id = "4436b0b7a023ab24067a60c1ccdc3ebb"
-token = "oAbwwCLOFqMdRCEvxdFaZ0yde00rszvmSDFItB4p"
+ezd_zone_id = os.getenv("CF_ZONE_ID")
+token = os.getenv("CF_TOKEN")
 
 client = Cloudflare(api_token=token)
 fixed = "ssl-proxy.easydigz.com"
+# Create boto3 session with explicit credentials
+aws_session = boto3.Session(
+    aws_access_key_id=AWS_ACCESS_KEY,
+    aws_secret_access_key=AWS_SECRET_KEY,
+    region_name=AWS_REGION
+)
 
+elb = aws_session.client("elbv2")
+# === CONFIG END ===
 
 def verify_cname(domain, expected):
     try:
@@ -31,12 +51,18 @@ def verify_cname(domain, expected):
         return False
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
 def wait_for_cf_ssl(client, zone_id, hostname, timeout=300):
     print(f" Checking SSL Status for {hostname}  ...")
     start = time.time()
     while time.time() - start < timeout:
+<<<<<<< HEAD
         # Get hostname by listing and matching
+=======
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
         hostnames = client.custom_hostnames.list(zone_id=zone_id).result
         hostname_obj = next((h for h in hostnames if h.hostname == hostname), None)
 
@@ -55,12 +81,17 @@ def wait_for_cf_ssl(client, zone_id, hostname, timeout=300):
 
 
 def get_next_priority(listener_arn):
+<<<<<<< HEAD
     client = boto3.client("elbv2")
     rules = client.describe_rules(ListenerArn=listener_arn)["Rules"]
+=======
+    rules = elb.describe_rules(ListenerArn=listener_arn)["Rules"]
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
     priorities = [int(r["Priority"]) for r in rules if r["Priority"].isdigit()]
     return max(priorities, default=1) + 1
 
 
+<<<<<<< HEAD
 
 
 def update_existing_alb_rule(rule_arn, new_domain):
@@ -72,6 +103,15 @@ def update_existing_alb_rule(rule_arn, new_domain):
     for cond in rule['Conditions']:
         if cond['Field'] == 'host-header':
             existing_domains = cond['HostHeaderConfig']['Values']
+=======
+def update_existing_alb_rule(rule_arn, new_domain):
+    rule = elb.describe_rules(RuleArns=[rule_arn])["Rules"][0]
+    existing_domains = []
+
+    for cond in rule["Conditions"]:
+        if cond["Field"] == "host-header":
+            existing_domains = cond["HostHeaderConfig"]["Values"]
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
             break
 
     if new_domain in existing_domains:
@@ -83,9 +123,15 @@ def update_existing_alb_rule(rule_arn, new_domain):
     elb.modify_rule(
         RuleArn=rule_arn,
         Conditions=[{
+<<<<<<< HEAD
             'Field': 'host-header',
             'HostHeaderConfig': {
                 'Values': updated_domains
+=======
+            "Field": "host-header",
+            "HostHeaderConfig": {
+                "Values": updated_domains
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
             }
         }]
     )
@@ -93,6 +139,7 @@ def update_existing_alb_rule(rule_arn, new_domain):
     print(f"Added '{new_domain}' to existing ALB rule.")
 
 
+<<<<<<< HEAD
 
 
 # === MAIN ===
@@ -108,10 +155,21 @@ domain = input("Enter your domain (e.g., portal.domain.com): ").strip()
 
 if not verify_cname(domain, fixed):
     print(" Domain CNAME does not match expected proxy.")
+=======
+# === MAIN ===
+if len(sys.argv) > 1:
+    domain = sys.argv[1].strip()
+else:
+    domain = input("Enter your domain (e.g., portal.domain.com): ").strip()
+
+if not verify_cname(domain, fixed):
+    print("Domain CNAME does not match expected proxy.")
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
     # exit(1)
 
 hostname_obj = wait_for_cf_ssl(client, ezd_zone_id, domain)
 if not hostname_obj:
+<<<<<<< HEAD
     print(" Aborting due to inactive SSL.")
     
     exit(1)
@@ -119,3 +177,9 @@ if not hostname_obj:
 
 update_existing_alb_rule(EXISTING_RULE_ARN, domain)
 
+=======
+    print("Aborting due to inactive SSL.")
+    exit(1)
+
+update_existing_alb_rule(EXISTING_RULE_ARN, domain)
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf

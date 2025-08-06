@@ -32,6 +32,18 @@ def add_domain_to_env(env_path, new_domain):
     print(f".env updated at {env_path}")
 
 # Usage /home/ubuntu/easydigz-server/.env.prod
+#domain = input("Enter your custom domain for CORS:").strip()
+#add_domain_to_env("/home/ubuntu/easydigz-server/.env.prod", domain)
 
-add_domain_to_env("/home/idea/Desktop/scripts/.env", "test.ideafoundation.in")
+import sys
+
+if len(sys.argv) > 1:
+    domain = sys.argv[1].strip()
+else:
+    domain = input("Enter your custom domain for CORS:").strip()
+
+# Now call your function with the domain
+add_domain_to_env("/home/ubuntu/easydigz-server/.env.prod", domain)
+
+
 #CORS_ORIGINS=https://easydigz.com,https://www.easydigz.com,https://*.easydigz.com,http://*.ideafoundation.co.in,https://*.ideafoundation.co.in,http://*.easydigz.com

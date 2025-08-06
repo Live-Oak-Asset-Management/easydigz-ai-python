@@ -1,15 +1,38 @@
+import os
 from cloudflare import Cloudflare
 import time
+import sys
+from dotenv import load_dotenv
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+env_path = os.path.join(script_dir, '.env')
+
+if not os.path.exists(env_path):
+    raise FileNotFoundError(f"env file not found at: {env_path}")
+
+load_dotenv(dotenv_path=env_path)
 
 # Set your Cloudflare API token and zone ID  
-token = "oAbwwCLOFqMdRCEvxdFaZ0yde00rszvmSDFItB4p"
-ezd_zone_id = "4436b0b7a023ab24067a60c1ccdc3ebb"
+ezd_zone_id = os.getenv("CF_ZONE_ID")
+token = os.getenv("CF_TOKEN")
+
 fixed = "ssl-proxy.easydigz.com"  #overide for specific agent-id
 
 client = Cloudflare(api_token=token)
 
+<<<<<<< HEAD
 # Step 1: Get custom domain from user
 custom_domain = input("Enter your custom domain (e.g., portal.domain.com): ").strip()
+=======
+
+# Step 1: Get custom domain from CLI or input
+if len(sys.argv) > 1:
+    custom_domain = sys.argv[1].strip()
+else:
+    custom_domain = input("Enter your custom domain (e.g., portal.domain.com): ").strip()
+
+#custom_domain = input("Enter your custom domain (e.g., portal.domain.com): ").strip()
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
 
 # Step 2: Create custom hostname with SSL (type: txt)
 try:
@@ -75,14 +98,22 @@ def print_dns_records(hostname_obj):
                     txt_name = getattr(record, "txt_name", None)
                     txt_value = getattr(record, "txt_value", None)
                     if status == "pending" and txt_name and txt_value:
+<<<<<<< HEAD
                         print(f"\n🔐 SSL Validation TXT:")
+=======
+                        print(f"\n SSL Validation TXT:")
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
                         print(f"Name:  {txt_name}")
                         print(f"Value: {txt_value}")
                         printed = True
                     
         # 2.b. ssl.txt_name / txt_value (direct)
         if hasattr(ssl, "txt_name") and hasattr(ssl, "txt_value"):
+<<<<<<< HEAD
             print(f"\n🔐 SSL Validation TXT (direct):")
+=======
+            print(f"\n SSL Validation TXT (direct):")
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
             print(f"Name:  {ssl.txt_name}")
             print(f"Value: {ssl.txt_value}")
             printed = True
@@ -90,7 +121,11 @@ def print_dns_records(hostname_obj):
 
 
     if not printed:
+<<<<<<< HEAD
         print("⚠️ No TXT records found yet. Please wait a few seconds and try again.")
+=======
+        print(" No TXT records found yet. Please wait a few seconds and try again.")
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
 
 
 
@@ -116,6 +151,9 @@ for attempt in range(MAX_RETRIES):
         break
 else:
     print("Timed out waiting for SSL to become active.")
+<<<<<<< HEAD
 
 
     
+=======
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf

@@ -1,4 +1,8 @@
 venv
 .env
 __pycache__
+<<<<<<< HEAD
 personalized_emails.csv
+=======
+personalized_emails.csv
+>>>>>>> 203a00865303c8d1507b9437e150bfbebb038acf
