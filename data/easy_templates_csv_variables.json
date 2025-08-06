@@ -296,7 +296,7 @@
     "_id": { "$oid": "64678e73d8c7eb6f388fd072" },
     "name": "EASYDIGZ | New Listing Created | Listing Form",
     "stage": "Listing-Created",
-    "template": "A listing has been created in EasyDigz!<br><br>Listing information:<br><br>1. Name:{{accountName}} <br> <br>2. Listing Address:{{listingAddress}}<br> <br>Listing URL - https://{{agentId}}.easydigz.com/admin/lisitngs/{{id}} <br> Click Here \n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+    "template": "A listing has been created in EasyDigz!<br><br>Listing information:<br><br>1. Name:{{accountName}} <br> <br>2. Listing Address:{{listingAddress}}<br> <br>Listing URL - https://{{agentId}}.easydigz.com/admin/listings/{{id}} <br> Click Here \n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
     "variable_input_schema": [
       {
         "type": "string",
