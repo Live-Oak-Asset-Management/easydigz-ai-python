@@ -37,6 +37,7 @@ def update_nginx_domains(new_domain):
     
     print(f"Processing domain: {clean_domain}")
     print(f"Domain to add: {domain_to_add}")
+    print(f"Nginx config file: {nginx_config_path}")
     
     try:
         # Read current nginx config
@@ -50,14 +51,16 @@ def update_nginx_domains(new_domain):
             with open(nginx_config_path, 'r') as f:
                 config_content = f.read()
             
-            # Find the server_name line
-            server_name_pattern = r'(server_name\s+[^;]+);'
-            match = re.search(server_name_pattern, config_content)
+            # Find the server_name line (look for the main server block, not commented ones)
+            server_name_pattern = r'^\s*(server_name\s+[^;]+);'
+            matches = re.findall(server_name_pattern, config_content, re.MULTILINE)
             
-            if match:
-                current_server_name_with_semicolon = match.group(0)  # includes semicolon
-                current_server_name = match.group(1)  # without semicolon
+            if matches:
+                # Use the first uncommented server_name line
+                current_server_name = matches[0]
+                current_server_name_with_semicolon = current_server_name + ';'
                 print(f"Current server_name: {current_server_name_with_semicolon}")
+                print(f"Total server_name lines found: {len(matches)}")
                 
                 # Check if the FULL domain is already in the list (more precise word boundary check)
                 domain_pattern = r'\b' + re.escape(domain_to_add) + r'\b'
