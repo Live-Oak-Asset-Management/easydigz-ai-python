@@ -1,49 +1,38 @@
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.middleware.cors import CORSMiddleware
-from subprocess import run, PIPE
 import os
 import sys
 import platform
+from fastapi import FastAPI, HTTPException, Query
+from subprocess import run, PIPE
 
 app = FastAPI()
 
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
-    allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
-    allow_headers=["*"],  # Allow all headers
-)
+# === Platform-aware Configuration ===
+def get_environment_config():
+    """Get platform-specific configuration"""
+    if platform.system() == "Windows":
+        # Windows development environment
+        scripts_dir = os.path.dirname(os.path.abspath(__file__))
+        python_bin = sys.executable
+    else:
+        # Linux production environment
+        scripts_dir = "/home/ubuntu/easydigz-python/domain-mapping"
+        python_bin = "/home/ubuntu/easydigz-python/venv/bin/python"
+    
+    return scripts_dir, python_bin
 
-# === Configuration ===
-# Detect environment - server (Linux) or local (Windows)
-IS_LOCAL = platform.system().lower() == "windows"
-
-if IS_LOCAL:
-    # Local development paths (Windows)
-    SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
-    PYTHON_BIN = sys.executable
-else:
-    # Server paths (Linux)
-    SCRIPTS_DIR = "/home/ubuntu/easydigz-python/domain-mapping"
-    PYTHON_BIN = "/home/ubuntu/easydigz-python/venv/bin/python"
+SCRIPTS_DIR, PYTHON_BIN = get_environment_config()
+print(f"Platform: {platform.system()}")
+print(f"Scripts directory: {SCRIPTS_DIR}")
+print(f"Python binary: {PYTHON_BIN}")
 
 # === Script Executor ===
 def run_script(script_name: str, args: list = []):
     script_path = os.path.join(SCRIPTS_DIR, script_name)
     
-    print(f"Looking for script at: {script_path}")
-    
     if not os.path.isfile(script_path):
-        available_files = os.listdir(SCRIPTS_DIR)
-        raise HTTPException(status_code=404, detail=f"Script '{script_name}' not found at {script_path}. Available files: {available_files}")
+        raise HTTPException(status_code=404, detail=f"Script '{script_name}' not found at {script_path}")
     
     try:
-        print(f"Running script: {script_path}")
-        print(f"Using Python: {PYTHON_BIN}")
-        print(f"Arguments: {args}")
-        
         result = run(
             [PYTHON_BIN, script_path] + args,
             stdout=PIPE,
@@ -67,11 +56,15 @@ def run_autocf(domain: str = Query(..., description="Custom domain (e.g., portal
 
 @app.get("/run/delete_cf")
 def run_delete_cf(domain: str = Query(..., description="Custom domain to delete from Cloudflare")):
-    return run_script("delete_cf.py", [domain, "--auto-confirm"])
+    return run_script("delete_cf.py", [domain])
 
 @app.get("/run/validate_dns")
-def run_validate_dns(domain: str = Query(..., description="Custom domain to validate DNS records for")):
+def run_validate_dns(domain: str = Query(..., description="Custom domain to validate DNS records")):
     return run_script("validate_dns.py", [domain])
+
+@app.get("/run/nginx_manager")
+def run_nginx_manager(domain: str = Query(..., description="Custom domain to add to nginx configuration")):
+    return run_script("nginx_manager.py", [domain])
 
 @app.get("/run/cors")
 def run_cors(domain: str = Query(..., description="Custom domain for CORS")):

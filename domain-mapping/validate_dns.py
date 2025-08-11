@@ -19,7 +19,7 @@ except ImportError:
     print("Warning: cloudflare package not available. Cloudflare status checks disabled.")
 
 def validate_dns_records(domain):
-    """Validate DNS records for a domain using both DNS lookups and Cloudflare API"""
+    """Validate DNS records for a domain - CNAME and SSL TXT only"""
     
     # Load environment variables
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -33,7 +33,6 @@ def validate_dns_records(domain):
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
         "checks": {
             "cname": {"status": "fail", "details": "", "expected": "ssl-proxy.easydigz.com"},
-            "ownership_txt": {"status": "fail", "details": "", "expected": "UUID format"},
             "ssl_txt": {"status": "fail", "details": "", "expected": "ACME challenge"}
         },
         "cloudflare_status": {"status": "unknown", "details": ""},
@@ -66,11 +65,6 @@ def validate_dns_records(domain):
                     # Show expected DNS records from Cloudflare
                     print(f"\nCloudflare expects these DNS records:")
                     
-                    # Ownership verification
-                    ov = getattr(cf_hostname, "ownership_verification", None)
-                    if ov and getattr(ov, "type", None) == "txt":
-                        print(f"Ownership TXT: {ov.name} = {ov.value}")
-                    
                     # SSL validation
                     ssl = getattr(cf_hostname, "ssl", None)
                     if ssl:
@@ -94,7 +88,6 @@ def validate_dns_records(domain):
         if not DNS_AVAILABLE:
             print("\nDNS validation skipped - dnspython not available")
             results["checks"]["cname"]["details"] = "DNS validation not available"
-            results["checks"]["ownership_txt"]["details"] = "DNS validation not available"
             results["checks"]["ssl_txt"]["details"] = "DNS validation not available"
         else:
             # 1. Check CNAME record
@@ -121,37 +114,7 @@ def validate_dns_records(domain):
                 results["checks"]["cname"]["details"] = f"DNS error: {str(e)}"
                 print(f"ERROR: DNS error checking CNAME: {str(e)}")
 
-            # 2. Check Ownership Verification TXT record
-            ownership_domain = f"_cf-custom-hostname.{domain}"
-            print(f"Checking ownership TXT record for {ownership_domain}...")
-            try:
-                txt_answers = dns.resolver.resolve(ownership_domain, 'TXT')
-                txt_values = [str(answer).strip('"') for answer in txt_answers]
-                
-                if txt_values:
-                    # Check if any value looks like a UUID
-                    uuid_found = any(len(val) == 36 and val.count('-') == 4 for val in txt_values)
-                    if uuid_found:
-                        results["checks"]["ownership_txt"]["status"] = "pass"
-                        results["checks"]["ownership_txt"]["details"] = f"Found UUID: {txt_values}"
-                        print(f"SUCCESS: Ownership TXT record found: {txt_values}")
-                    else:
-                        results["checks"]["ownership_txt"]["details"] = f"Found non-UUID values: {txt_values}"
-                        print(f"WARNING: Found TXT records but not UUID format: {txt_values}")
-                else:
-                    results["checks"]["ownership_txt"]["details"] = "No TXT records found"
-                    print(f"FAIL: No ownership TXT records found")
-            except dns.resolver.NXDOMAIN:
-                results["checks"]["ownership_txt"]["details"] = "Ownership domain not found"
-                print(f"FAIL: Ownership domain not found: {ownership_domain}")
-            except dns.resolver.NoAnswer:
-                results["checks"]["ownership_txt"]["details"] = "No TXT record found"
-                print(f"FAIL: No ownership TXT record found")
-            except Exception as e:
-                results["checks"]["ownership_txt"]["details"] = f"DNS error: {str(e)}"
-                print(f"ERROR: DNS error checking ownership TXT: {str(e)}")
-
-            # 3. Check SSL Validation TXT record
+            # 2. Check SSL Validation TXT record
             ssl_domain = f"_acme-challenge.{domain}"
             print(f"Checking SSL validation TXT record for {ssl_domain}...")
             try:
@@ -176,7 +139,7 @@ def validate_dns_records(domain):
                 print(f"FAIL: SSL validation domain not found: {ssl_domain}")
             except dns.resolver.NoAnswer:
                 results["checks"]["ssl_txt"]["details"] = "No TXT record found"
-                print(f"FAIL: No SSL validation TXT record found")
+                print(f"FAIL: No SSL validation TXT record found for {ssl_domain}")
             except Exception as e:
                 results["checks"]["ssl_txt"]["details"] = f"DNS error: {str(e)}"
                 print(f"ERROR: DNS error checking SSL validation TXT: {str(e)}")
@@ -196,8 +159,6 @@ def validate_dns_records(domain):
         print(f"\n=== DNS VALIDATION SUMMARY for {domain} ===")
         print(f"CNAME Record: {results['checks']['cname']['status'].upper()}")
         print(f"  {results['checks']['cname']['details']}")
-        print(f"Ownership TXT: {results['checks']['ownership_txt']['status'].upper()}")
-        print(f"  {results['checks']['ownership_txt']['details']}")
         print(f"SSL TXT: {results['checks']['ssl_txt']['status'].upper()}")
         print(f"  {results['checks']['ssl_txt']['details']}")
         print(f"Cloudflare Status: {results['cloudflare_status']['details']}")
