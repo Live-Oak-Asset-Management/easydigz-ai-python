@@ -65,6 +65,7 @@ def run_validate_dns(domain: str = Query(..., description="Custom domain to vali
 @app.get("/run/nginx_manager")
 def run_nginx_manager(domain: str = Query(..., description="Custom domain to add to nginx configuration")):
     return run_script("nginx_manager.py", [domain])
+    
 
 @app.get("/run/cors")
 def run_cors(domain: str = Query(..., description="Custom domain for CORS")):
