@@ -1,8 +1,13 @@
 import os
 import sys
 import platform
+import logging
 from fastapi import FastAPI, HTTPException, Query
 from subprocess import run, PIPE
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -29,16 +34,27 @@ print(f"Python binary: {PYTHON_BIN}")
 def run_script(script_name: str, args: list = []):
     script_path = os.path.join(SCRIPTS_DIR, script_name)
     
+    logger.info(f"Executing script: {script_name} with args: {args}")
+    logger.info(f"Script path: {script_path}")
+    
     if not os.path.isfile(script_path):
-        raise HTTPException(status_code=404, detail=f"Script '{script_name}' not found at {script_path}")
+        error_msg = f"Script '{script_name}' not found at {script_path}"
+        logger.error(error_msg)
+        raise HTTPException(status_code=404, detail=error_msg)
     
     try:
+        logger.info(f"Running command: {[PYTHON_BIN, script_path] + args}")
         result = run(
             [PYTHON_BIN, script_path] + args,
             stdout=PIPE,
             stderr=PIPE,
             text=True
         )
+        
+        logger.info(f"Script exit code: {result.returncode}")
+        logger.info(f"Script stdout: {result.stdout}")
+        logger.info(f"Script stderr: {result.stderr}")
+        
         return {
             "script": script_name,
             "args": args,
@@ -47,7 +63,9 @@ def run_script(script_name: str, args: list = []):
             "stderr": result.stderr.strip()
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Execution error: {str(e)}")
+        error_msg = f"Execution error: {str(e)}"
+        logger.error(error_msg)
+        raise HTTPException(status_code=500, detail=error_msg)
 
 # === API Endpoints ===
 @app.get("/run/autocf")
@@ -64,8 +82,17 @@ def run_validate_dns(domain: str = Query(..., description="Custom domain to vali
 
 @app.get("/run/nginx_manager")
 def run_nginx_manager(domain: str = Query(..., description="Custom domain to add to nginx configuration")):
+    logger.info(f"nginx_manager endpoint called with domain: {domain}")
     return run_script("nginx_manager.py", [domain])
-    
+
+@app.get("/test/nginx_manager")
+def test_nginx_manager(domain: str = Query(..., description="Test nginx manager script")):
+    """Test endpoint to check nginx_manager script directly"""
+    logger.info(f"Testing nginx_manager with domain: {domain}")
+    script_path = os.path.join(SCRIPTS_DIR, "nginx_manager.py")
+    logger.info(f"Script exists: {os.path.exists(script_path)}")
+    return {"script_exists": os.path.exists(script_path), "script_path": script_path, "domain": domain}
+
 
 @app.get("/run/cors")
 def run_cors(domain: str = Query(..., description="Custom domain for CORS")):
