@@ -63,12 +63,15 @@ def run_script(script_name: str, args: list = []):
 # === API Endpoints ===
 @app.get("/run/autocf")
 def run_autocf(domain: str = Query(..., description="Custom domain (e.g., portal.example.com)")):
-    # if IS_LOCAL:
-    #     # Use mock script for local development
-    #     return run_script("mock_autocf.py", [domain])
-    # else:
-    #     return run_script("autocf.py", [domain])
     return run_script("autocf.py", [domain])
+
+@app.get("/run/delete_cf")
+def run_delete_cf(domain: str = Query(..., description="Custom domain to delete from Cloudflare")):
+    return run_script("delete_cf.py", [domain, "--auto-confirm"])
+
+@app.get("/run/validate_dns")
+def run_validate_dns(domain: str = Query(..., description="Custom domain to validate DNS records for")):
+    return run_script("validate_dns.py", [domain])
 
 @app.get("/run/cors")
 def run_cors(domain: str = Query(..., description="Custom domain for CORS")):

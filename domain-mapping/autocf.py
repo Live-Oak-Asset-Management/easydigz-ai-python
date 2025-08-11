@@ -29,6 +29,48 @@ else:
 
 #custom_domain = input("Enter your custom domain (e.g., portal.domain.com): ").strip()
 
+# First, check if the hostname already exists and delete it if it does
+try:
+    # List all custom hostnames for the zone
+    hostnames_response = client.custom_hostnames.list(zone_id=ezd_zone_id)
+    
+    # Extract the actual list of hostnames from the response
+    if hasattr(hostnames_response, 'result'):
+        hostnames = hostnames_response.result
+    else:
+        hostnames = hostnames_response
+
+    existing_id = None
+    for hostname in hostnames:
+        if hostname.hostname == custom_domain:
+            existing_id = hostname.id
+            break
+
+    if existing_id:
+        print(f"\nFound existing hostname for {custom_domain}, deleting first...")
+        client.custom_hostnames.delete(
+            zone_id=ezd_zone_id,
+            custom_hostname_id=existing_id
+        )
+        print(f"Existing hostname deleted. Waiting a moment before creating new one...")
+        time.sleep(5)  # Wait a bit for deletion to propagate
+        
+        # Verify deletion by checking if it's gone
+        print("Verifying deletion...")
+        verification_response = client.custom_hostnames.list(zone_id=ezd_zone_id)
+        verification_hostnames = verification_response.result if hasattr(verification_response, 'result') else verification_response
+        still_exists = any(h.hostname == custom_domain for h in verification_hostnames)
+        
+        if still_exists:
+            print("Warning: Hostname still exists after deletion attempt. Waiting longer...")
+            time.sleep(10)
+        else:
+            print("Hostname successfully deleted.")
+            
+except Exception as e:
+    print(f"Error checking for existing hostname: {str(e)}")
+    # Continue with creation even if check fails
+
 # Step 2: Create custom hostname with SSL (type: txt)
 try:
     response = client.custom_hostnames.create(
@@ -48,89 +90,144 @@ try:
 except Exception as e:
     print("! Failed to create custom hostname !")
     if hasattr(e, "response") and e.response is not None:
-        print(e.response.json())
+        error_response = e.response.json()
+        print(error_response)
+        
+        # Check if it's a duplicate hostname error
+        if (error_response.get('errors') and 
+            any('Duplicate custom hostname found' in err.get('message', '') for err in error_response.get('errors', []))):
+            print("Error: Duplicate hostname found. Please try deleting it first using /run/delete_cf endpoint.")
+            print(f"Command: curl http://127.0.0.1:8080/run/delete_cf?domain={custom_domain}")
     else:
         print(str(e))
     exit(1)
 
-# Step 3: Fetch updated hostname to get TXT records
-time.sleep(2)  # Wait for propagation
+# Step 3: Fetch updated hostname to get TXT records with retries
+print("\nWaiting for SSL validation records to be generated...")
+time.sleep(5)  # Initial wait
 
 hostname_id = response.id
-hostname_obj = client.custom_hostnames.get(zone_id=ezd_zone_id,custom_hostname_id=hostname_id)
+hostname_obj = None
+
+# Retry fetching hostname details multiple times to get complete SSL records
+MAX_FETCH_RETRIES = 5
+FETCH_WAIT_SECONDS = 3
+
+for fetch_attempt in range(MAX_FETCH_RETRIES):
+    try:
+        hostname_obj = client.custom_hostnames.get(zone_id=ezd_zone_id, custom_hostname_id=hostname_id)
+        
+        # Check if we have complete SSL validation records
+        ssl = getattr(hostname_obj, "ssl", None)
+        has_ssl_records = False
+        
+        if ssl:
+            # Check for validation_records
+            records = getattr(ssl, "validation_records", [])
+            if records and len(records) > 0:
+                has_ssl_records = True
+            
+            # Check for direct txt_name/txt_value
+            if hasattr(ssl, "txt_name") and hasattr(ssl, "txt_value"):
+                has_ssl_records = True
+        
+        if has_ssl_records:
+            print(f"SSL validation records found on attempt {fetch_attempt + 1}")
+            break
+        else:
+            print(f"Attempt {fetch_attempt + 1}: SSL validation records not yet available, waiting...")
+            if fetch_attempt < MAX_FETCH_RETRIES - 1:  # Don't wait on the last attempt
+                time.sleep(FETCH_WAIT_SECONDS)
+                
+    except Exception as e:
+        print(f"Error fetching hostname details on attempt {fetch_attempt + 1}: {str(e)}")
+        if fetch_attempt < MAX_FETCH_RETRIES - 1:
+            time.sleep(FETCH_WAIT_SECONDS)
 
 # Step 4: Print all TXT validation records
 def print_dns_records(hostname_obj):
-    print("\n Please add the following TXT records to your domain's DNS:")
+    print("\n=== DNS RECORDS TO ADD ===")
+    print("\nPlease add the following records to your domain's DNS:")
 
-    printed = False
-    #General CNAME Mapping
-    print("\n Add CNAME record")
-    print(f"Name:   {hostname_obj.hostname}")
-    print(f"Value:  {fixed}")
-
+    printed_ssl_records = False
+    
+    # General CNAME Mapping (always show this)
+    print(f"\n1. CNAME record:")
+    print(f"   Name:  {hostname_obj.hostname}")
+    print(f"   Value: {fixed}")
 
     # 1. ownership_verification
     ov = getattr(hostname_obj, "ownership_verification", None)
-    # if ov and ov.type == "txt":
     if ov and getattr(ov, "type", None) == "txt":
-        print(f"\n Ownership Verification TXT:")
-        print(f"Name:  {ov.name}")
-        print(f"Value: {ov.value}")
-        printed = True
+        print(f"\n2. Ownership Verification TXT:")
+        print(f"   Name:  {ov.name}")
+        print(f"   Value: {ov.value}")
 
-    # ssl = hostname_obj.ssl
+    # 2. SSL validation records
     ssl = getattr(hostname_obj, "ssl", None)
     if ssl:
-    # 2.a ssl.validation_records[]
+        print(f"\n3. SSL Validation Records:")
+        
+        # 2.a ssl.validation_records[] (array of records)
         records = getattr(ssl, "validation_records", [])
-        # if ssl.validation_records:
         if records:
-            records = ssl.validation_records
-            for record in records:
-                if record.status == "pending":
-                    status = getattr(record, "status", None)
-                    txt_name = getattr(record, "txt_name", None)
-                    txt_value = getattr(record, "txt_value", None)
-                    if status == "pending" and txt_name and txt_value:
-                        print(f"\n SSL Validation TXT:")
-                        print(f"Name:  {txt_name}")
-                        print(f"Value: {txt_value}")
-                        printed = True
+            for i, record in enumerate(records):
+                status = getattr(record, "status", "unknown")
+                txt_name = getattr(record, "txt_name", None)
+                txt_value = getattr(record, "txt_value", None)
+                
+                if txt_name and txt_value:
+                    print(f"   SSL TXT Record {i+1} (status: {status}):")
+                    print(f"   Name:  {txt_name}")
+                    print(f"   Value: {txt_value}")
+                    printed_ssl_records = True
                     
-        # 2.b. ssl.txt_name / txt_value (direct)
+        # 2.b. ssl.txt_name / txt_value (direct properties)
         if hasattr(ssl, "txt_name") and hasattr(ssl, "txt_value"):
-            print(f"\n SSL Validation TXT (direct):")
-            print(f"Name:  {ssl.txt_name}")
-            print(f"Value: {ssl.txt_value}")
-            printed = True
-
-
-
-    if not printed:
-        print(" No TXT records found yet. Please wait a few seconds and try again.")
+            print(f"   SSL TXT Record (direct):")
+            print(f"   Name:  {ssl.txt_name}")
+            print(f"   Value: {ssl.txt_value}")
+            printed_ssl_records = True
+            
+        # Show SSL status
+        ssl_status = getattr(ssl, "status", "unknown")
+        print(f"\n   SSL Status: {ssl_status}")
+        
+    if not printed_ssl_records:
+        print(f"   WARNING: SSL validation records not yet available.")
+        print(f"   Please wait a few moments and check again, or")
+        print(f"   re-run: curl \"http://localhost:8080/run/autocf?domain={hostname_obj.hostname}\"")
+    
+    print("\n" + "="*50)
 
 
 
 print_dns_records(hostname_obj)
 
-# Step 2: Poll until SSL status becomes "active" or times out
-MAX_RETRIES = 3
-WAIT_SECONDS = 5
+# Step 5: Poll until SSL status becomes "active" or times out
+if hostname_obj:
+    MAX_RETRIES = 3
+    WAIT_SECONDS = 5
 
-for attempt in range(MAX_RETRIES):
-    time.sleep(WAIT_SECONDS)
-    updated = client.custom_hostnames.get(zone_id=ezd_zone_id,custom_hostname_id=hostname_id    )
-    ssl_status = updated.ssl.status
-    print(f"Attempt {attempt+1}: SSL status = {ssl_status}")
+    for attempt in range(MAX_RETRIES):
+        time.sleep(WAIT_SECONDS)
+        try:
+            updated = client.custom_hostnames.get(zone_id=ezd_zone_id, custom_hostname_id=hostname_id)
+            ssl_status = updated.ssl.status if updated.ssl else "unknown"
+            print(f"Attempt {attempt+1}: SSL status = {ssl_status}")
 
-    if ssl_status == "active":
-        print("SSL is active!")
-        break
-    elif ssl_status in ["pending_validation", "initializing", "pending_deployment"]:
-        continue
+            if ssl_status == "active":
+                print("SUCCESS: SSL is active!")
+                break
+            elif ssl_status in ["pending_validation", "initializing", "pending_deployment"]:
+                continue
+            else:
+                print(f"WARNING: Unexpected status: {ssl_status}")
+                break
+        except Exception as e:
+            print(f"Error checking SSL status on attempt {attempt+1}: {str(e)}")
     else:
-        print(f"Unexpected status: {ssl_status}")
-        break
+        print("TIMEOUT: Timed out waiting for SSL to become active.")
+        print("NOTE: This is normal - SSL validation can take several minutes after DNS records are added.")
 else:
-    print("Timed out waiting for SSL to become active.")
+    print("ERROR: Could not retrieve hostname details. Please check your Cloudflare configuration.")
