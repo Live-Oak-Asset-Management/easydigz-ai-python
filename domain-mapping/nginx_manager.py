@@ -31,12 +31,12 @@ def update_nginx_domains(new_domain):
     
     nginx_config_path = os.getenv("NGINX_CONFIG_PATH", "/etc/nginx/conf.d/stage.conf")
     
-    # Clean the domain
+    # Clean the domain but keep the full domain (including subdomain)
     clean_domain = extract_domain_from_url(new_domain)
-    base_domain = get_base_domain(clean_domain)
+    domain_to_add = clean_domain  # Use the full domain, not base domain
     
     print(f"Processing domain: {clean_domain}")
-    print(f"Base domain: {base_domain}")
+    print(f"Domain to add: {domain_to_add}")
     
     try:
         # Read current nginx config
@@ -59,17 +59,21 @@ def update_nginx_domains(new_domain):
                 current_server_name = match.group(1)  # without semicolon
                 print(f"Current server_name: {current_server_name_with_semicolon}")
                 
-                # Check if base domain is already in the list
-                if base_domain not in current_server_name:
-                    # Add the base domain to server_name (before the semicolon)
-                    new_server_name_with_semicolon = current_server_name + f' {base_domain};'
+                # Check if the FULL domain is already in the list (more precise word boundary check)
+                domain_pattern = r'\b' + re.escape(domain_to_add) + r'\b'
+                if re.search(domain_pattern, current_server_name):
+                    print(f"INFO: Domain {domain_to_add} already exists in nginx configuration")
+                    print(f"Domain found using pattern: {domain_pattern}")
+                else:
+                    # Add the FULL domain to server_name (before the semicolon)
+                    new_server_name_with_semicolon = current_server_name + f' {domain_to_add};'
                     updated_config = config_content.replace(current_server_name_with_semicolon, new_server_name_with_semicolon)
                     
                     # Write back to file
                     with open(nginx_config_path, 'w') as f:
                         f.write(updated_config)
                     
-                    print(f"SUCCESS: Added {base_domain} to nginx configuration")
+                    print(f"SUCCESS: Added {domain_to_add} to nginx configuration")
                     print(f"New server_name: {new_server_name_with_semicolon}")
                     
                     # Reload nginx
@@ -79,8 +83,6 @@ def update_nginx_domains(new_domain):
                     else:
                         print("ERROR: Failed to reload nginx configuration")
                         return False
-                else:
-                    print(f"INFO: Domain {base_domain} already exists in nginx configuration")
             else:
                 print("ERROR: Could not find server_name line in nginx configuration")
                 return False
@@ -99,9 +101,9 @@ def update_env_domains(new_domain):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     env_path = os.path.join(script_dir, '.env')
     
-    # Clean the domain
+    # Clean the domain and use the full domain (including subdomain)
     clean_domain = extract_domain_from_url(new_domain)
-    base_domain = get_base_domain(clean_domain)
+    domain_to_add = clean_domain  # Use full domain, not base domain
     
     try:
         # Load current env
@@ -112,17 +114,17 @@ def update_env_domains(new_domain):
         current_domains = os.getenv("NGINX_DOMAINS", "")
         domain_list = [d.strip() for d in current_domains.split(',') if d.strip()]
         
-        # Add base domain if not already present (don't override existing)
-        if base_domain not in domain_list:
-            domain_list.append(base_domain)
+        # Add FULL domain if not already present (don't override existing)
+        if domain_to_add not in domain_list:
+            domain_list.append(domain_to_add)
             updated_domains = ', '.join(domain_list)
             
             # Update .env file
             set_key(env_path, "NGINX_DOMAINS", updated_domains)
-            print(f"SUCCESS: Added {base_domain} to .env NGINX_DOMAINS")
+            print(f"SUCCESS: Added {domain_to_add} to .env NGINX_DOMAINS")
             print(f"Current NGINX_DOMAINS: {updated_domains}")
         else:
-            print(f"INFO: Domain {base_domain} already exists in .env NGINX_DOMAINS")
+            print(f"INFO: Domain {domain_to_add} already exists in .env NGINX_DOMAINS")
             print(f"Current NGINX_DOMAINS: {current_domains}")
         
         return True
