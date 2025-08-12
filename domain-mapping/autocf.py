@@ -110,8 +110,8 @@ hostname_id = response.id
 hostname_obj = None
 
 # Retry fetching hostname details multiple times to get complete SSL records
-MAX_FETCH_RETRIES = 5
-FETCH_WAIT_SECONDS = 3
+MAX_FETCH_RETRIES = 10
+FETCH_WAIT_SECONDS = 5
 
 for fetch_attempt in range(MAX_FETCH_RETRIES):
     try:
