@@ -84,20 +84,20 @@ def delete_custom_hostname(custom_domain):
             print(f"- CNAME pointing to: {origin_server}")
         
         # Skip confirmation if --auto-confirm flag is present
-        if "--auto-confirm" not in sys.argv:    
-            confirmation = input("\nConfirm deletion? (y/n): ").strip().lower()
-            if confirmation != 'y':
-                print("Deletion cancelled.")
-                result = {
-                    "success": False,
-                    "message": "Deletion cancelled by user",
-                    "hostname": custom_domain
-                }
-                print(json.dumps(result))
-                sys.exit(0)
-        else:
-            print("Auto-confirming deletion...")
-            
+        # if "--auto-confirm" not in sys.argv:    
+        #     confirmation = input("\nConfirm deletion? (y/n): ").strip().lower()
+        #     if confirmation != 'y':
+        #         print("Deletion cancelled.")
+        #         result = {
+        #             "success": False,
+        #             "message": "Deletion cancelled by user",
+        #             "hostname": custom_domain
+        #         }
+        #         print(json.dumps(result))
+        #         sys.exit(0)
+        # else:
+        #     print("Auto-confirming deletion...")
+        print("Auto-confirming deletion...")
         # Delete the custom hostname
         response = client.custom_hostnames.delete(
             zone_id=ezd_zone_id,
