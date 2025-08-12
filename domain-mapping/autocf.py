@@ -196,7 +196,6 @@ def print_dns_records(hostname_obj):
     if not printed_ssl_records:
         print(f"   WARNING: SSL validation records not yet available.")
         print(f"   Please wait a few moments and check again, or")
-        print(f"   re-run: curl \"http://localhost:8080/run/autocf?domain={hostname_obj.hostname}\"")
     
     print("\n" + "="*50)
 
