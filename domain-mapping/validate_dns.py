@@ -28,11 +28,16 @@ def validate_dns_records(domain):
     if os.path.exists(env_path):
         load_dotenv(dotenv_path=env_path)
     
+    # Get SSL proxy URL from environment variable
+    # For Production: ssl-easy.easydigz.com
+    # For Staging: ssl-proxy.easydigz.com
+    ssl_proxy_url = os.getenv("SSL_PROXY_URL", "ssl-proxy.easydigz.com")  # Default to staging
+    
     results = {
         "domain": domain,
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
         "checks": {
-            "cname": {"status": "fail", "details": "", "expected": "ssl-proxy.easydigz.com"},
+            "cname": {"status": "fail", "details": "", "expected": ssl_proxy_url},
             "ssl_txt": {"status": "fail", "details": "", "expected": "ACME challenge"}
         },
         "cloudflare_status": {"status": "unknown", "details": ""},
@@ -95,7 +100,7 @@ def validate_dns_records(domain):
             try:
                 cname_answers = dns.resolver.resolve(domain, 'CNAME')
                 cname_value = str(cname_answers[0]).rstrip('.')
-                expected_cname = "ssl-proxy.easydigz.com"
+                expected_cname = ssl_proxy_url
                 
                 if cname_value == expected_cname:
                     results["checks"]["cname"]["status"] = "pass"

@@ -27,8 +27,12 @@ AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
 ezd_zone_id = os.getenv("CF_ZONE_ID")
 token = os.getenv("CF_TOKEN")
 
+# Get SSL proxy URL from environment variable
+# For Production: ssl-easy.easydigz.com
+# For Staging: ssl-proxy.easydigz.com
+ssl_proxy_url = os.getenv("SSL_PROXY_URL", "ssl-proxy.easydigz.com")  # Default to staging
+
 client = Cloudflare(api_token=token)
-fixed = "ssl-proxy.easydigz.com"
 # Create boto3 session with explicit credentials
 aws_session = boto3.Session(
     aws_access_key_id=AWS_ACCESS_KEY,
@@ -113,7 +117,7 @@ if len(sys.argv) > 1:
 else:
     domain = input("Enter your domain (e.g., portal.domain.com): ").strip()
 
-if not verify_cname(domain, fixed):
+if not verify_cname(domain, ssl_proxy_url):
     print("Domain CNAME does not match expected proxy.")
     # exit(1)
 
