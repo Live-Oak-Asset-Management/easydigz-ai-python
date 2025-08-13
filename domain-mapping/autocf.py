@@ -16,7 +16,10 @@ load_dotenv(dotenv_path=env_path)
 ezd_zone_id = os.getenv("CF_ZONE_ID")
 token = os.getenv("CF_TOKEN")
 
-fixed = "ssl-proxy.easydigz.com"  #overide for specific agent-id
+# Get SSL proxy URL from environment variable
+# For Production: ssl-easy.easydigz.com
+# For Staging: ssl-proxy.easydigz.com
+ssl_proxy_url = os.getenv("SSL_PROXY_URL", "ssl-proxy.easydigz.com")  # Default to staging
 
 client = Cloudflare(api_token=token)
 
@@ -81,7 +84,7 @@ try:
                 "method": "txt"
             },
         
-        extra_body={"custom_origin_server":fixed}
+        extra_body={"custom_origin_server": ssl_proxy_url}
     )
 
     print(f"\n Creating Custom hostname : {response.hostname}")
@@ -97,7 +100,6 @@ except Exception as e:
         if (error_response.get('errors') and 
             any('Duplicate custom hostname found' in err.get('message', '') for err in error_response.get('errors', []))):
             print("Error: Duplicate hostname found. Please try deleting it first using /run/delete_cf endpoint.")
-            print(f"Command: curl http://127.0.0.1:8080/run/delete_cf?domain={custom_domain}")
     else:
         print(str(e))
     exit(1)
@@ -110,7 +112,7 @@ hostname_id = response.id
 hostname_obj = None
 
 # Retry fetching hostname details multiple times to get complete SSL records
-MAX_FETCH_RETRIES = 10
+MAX_FETCH_RETRIES = 5
 FETCH_WAIT_SECONDS = 5
 
 for fetch_attempt in range(MAX_FETCH_RETRIES):
@@ -154,7 +156,7 @@ def print_dns_records(hostname_obj):
     # General CNAME Mapping (always show this)
     print(f"\n1. CNAME record:")
     print(f"   Name:  {hostname_obj.hostname}")
-    print(f"   Value: {fixed}")
+    print(f"   Value: {ssl_proxy_url}")
 
     # 1. ownership_verification
     ov = getattr(hostname_obj, "ownership_verification", None)
