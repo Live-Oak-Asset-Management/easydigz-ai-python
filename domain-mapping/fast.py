@@ -4,12 +4,20 @@ import platform
 import logging
 from fastapi import FastAPI, HTTPException, Query
 from subprocess import run, PIPE
+from dotenv import load_dotenv
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+# Load environment variables
+script_dir = os.path.dirname(os.path.abspath(__file__))
+env_path = os.path.join(script_dir, '.env')
+
+if os.path.exists(env_path):
+    load_dotenv(dotenv_path=env_path)
 
 # === Platform-aware Configuration ===
 def get_environment_config():
@@ -19,9 +27,9 @@ def get_environment_config():
         scripts_dir = os.path.dirname(os.path.abspath(__file__))
         python_bin = sys.executable
     else:
-        # Linux production environment
-        scripts_dir = "/home/ubuntu/easydigz-python/domain-mapping"
-        python_bin = "/home/ubuntu/easydigz-python/venv/bin/python"
+        # Linux production environment - read from .env
+        scripts_dir = os.getenv("SCRIPTS_DIR", "/home/ubuntu/easydigz-python/domain-mapping")
+        python_bin = os.getenv("PYTHON_BIN", "/home/ubuntu/easydigz-python/venv/bin/python")
     
     return scripts_dir, python_bin
 
