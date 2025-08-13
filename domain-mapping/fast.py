@@ -100,6 +100,13 @@ def run_cors(domain: str = Query(..., description="Custom domain for CORS")):
 
 @app.get("/run/alb")
 def run_alb(domain: str = Query(..., description="Custom domain to add to ALB")):
+    return {
+            "script": "alb.py",
+            "args": "",
+            "exit_code": "",
+            "stdout": "",
+            "stderr": ""
+        }
     return run_script("alb.py", [domain])
 
 @app.get("/run/dbkp")
