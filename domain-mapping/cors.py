@@ -34,11 +34,12 @@ def add_domain_to_env(env_path, new_domain):
     print(f".env updated at {env_path}")
 
 
-def restart_pm2():
-    """Restart PM2 apps to pick up the updated .env files."""
+def restart_pm2(proc: str | int = "3"):
+    """Restart a specific PM2 app (default: id 3) to pick up the updated .env files."""
+    proc_str = str(proc)
     try:
-        print("Restarting PM2 apps (pm2 restart all)...")
-        result = subprocess.run(["pm2", "restart", "all"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        print(f"Restarting PM2 process {proc_str} (pm2 restart {proc_str})...")
+        result = subprocess.run(["pm2", "restart", proc_str], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if result.stdout:
             print(result.stdout.strip())
         if result.returncode != 0:
@@ -68,8 +69,8 @@ add_domain_to_env("/home/ubuntu/easydigz-server/.env.prod", domain)
 add_domain_to_env("/home/ubuntu/easydigz-server/.env.local", domain)
 add_domain_to_env("/home/ubuntu/easydigz-server/.env", domain)
 
-# Restart PM2 so apps pick up updated envs
-restart_pm2()
+# Restart only PM2 process 3 so apps pick up updated envs
+restart_pm2("3")
 
 
 #CORS_ORIGINS=https://easydigz.com,https://www.easydigz.com,https://*.easydigz.com,http://*.ideafoundation.co.in,https://*.ideafoundation.co.in,http://*.easydigz.com
