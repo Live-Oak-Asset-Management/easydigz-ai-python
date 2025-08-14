@@ -66,6 +66,7 @@ else:
 add_domain_to_env("/home/ubuntu/easydigz-server/.env", domain)
 add_domain_to_env("/home/ubuntu/easydigz-server/.env.prod", domain)
 add_domain_to_env("/home/ubuntu/easydigz-server/.env.local", domain)
+add_domain_to_env("/home/ubuntu/easydigz-server/.env", domain)
 
 # Restart PM2 so apps pick up updated envs
 restart_pm2()
