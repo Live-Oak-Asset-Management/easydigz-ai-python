@@ -38,8 +38,8 @@ def restart_pm2(proc: str | int = "3"):
     """Restart a specific PM2 app (default: id 3) to pick up the updated .env files."""
     proc_str = str(proc)
     try:
-        print(f"Restarting PM2 process {proc_str} (pm2 restart {proc_str})...")
-        result = subprocess.run(["pm2", "restart", proc_str], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        print(f"Restarting PM2 process {proc_str} as ubuntu user...")
+        result = subprocess.run(["su", "-", "ubuntu", "-c", f"pm2 restart {proc_str} --update-env"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if result.stdout:
             print(result.stdout.strip())
         if result.returncode != 0:
