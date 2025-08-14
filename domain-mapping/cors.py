@@ -45,6 +45,7 @@ else:
 # Now call your function with the domain
 add_domain_to_env("/home/ubuntu/easydigz-server/.env.prod", domain)
 add_domain_to_env("/home/ubuntu/easydigz-server/.env.local", domain)
+add_domain_to_env("/home/ubuntu/easydigz-server/.env", domain)
 
 
 #CORS_ORIGINS=https://easydigz.com,https://www.easydigz.com,https://*.easydigz.com,http://*.ideafoundation.co.in,https://*.ideafoundation.co.in,http://*.easydigz.com
