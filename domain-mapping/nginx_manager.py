@@ -44,8 +44,9 @@ def update_nginx_domains(new_domain):
         if os.path.exists(nginx_config_path):
             # Take backup of config file
             backup_path = f"{nginx_config_path}.backup"
-            import shutil
-            shutil.copy2(nginx_config_path, backup_path)
+            # import shutil
+            #shutil.copy2(nginx_config_path, backup_path)
+            os.system(f"sudo cp {nginx_config_path} {backup_path}")
             print(f"INFO: Backup created at {backup_path}")
             
             with open(nginx_config_path, 'r') as f:
@@ -73,9 +74,17 @@ def update_nginx_domains(new_domain):
                     updated_config = config_content.replace(current_server_name_with_semicolon, new_server_name_with_semicolon)
                     
                     # Write back to file
-                    with open(nginx_config_path, 'w') as f:
+                    #with open(nginx_config_path, 'w') as f:
+                    #    f.write(updated_config)
+                    tmp_path = "/tmp/nginx_tmp.conf"
+                    with open(tmp_path, 'w') as f:
                         f.write(updated_config)
-                    
+                    os.system(f"sudo cp {tmp_path} {nginx_config_path}")
+                    os.remove(tmp_path)
+
+
+
+
                     print(f"SUCCESS: Added {domain_to_add} to nginx configuration")
                     print(f"New server_name: {new_server_name_with_semicolon}")
                     
