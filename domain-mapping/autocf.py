@@ -23,14 +23,23 @@ ssl_proxy_url = os.getenv("SSL_PROXY_URL", "ssl-proxy.easydigz.com")  # Default 
 
 client = Cloudflare(api_token=token)
 
+def is_apex_domain(domain: str):
+    return domain.count('.') == 1
 
 # Step 1: Get custom domain from CLI or input
 if len(sys.argv) > 1:
-    custom_domain = sys.argv[1].strip()
+    custom_domain = sys.argv[1].strip().lower()
 else:
-    custom_domain = input("Enter your custom domain (e.g., portal.domain.com): ").strip()
+    custom_domain = input("Enter your custom domain (e.g., portal.domain.com): ").strip().lower()
 
-#custom_domain = input("Enter your custom domain (e.g., portal.domain.com): ").strip()
+original_domain = custom_domain
+
+# If user gave an apex domain (single dot), force www
+if is_apex_domain(custom_domain):
+    print(f"\n Apex domain detected: {custom_domain}")
+    custom_domain = "www." + custom_domain
+    print(f" Automatically switching to use: {custom_domain}")
+
 
 # First, check if the hostname already exists and delete it if it does
 try:
