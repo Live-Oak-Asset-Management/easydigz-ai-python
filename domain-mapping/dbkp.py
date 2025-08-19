@@ -68,9 +68,9 @@ def backup_table():
         result = subprocess.run(cmd, stdout=f, stderr=subprocess.PIPE, text=True)
 
     if result.returncode != 0:
-        raise Exception(f"❌ Backup failed: {result.stderr}")
+        raise Exception(f" Backup failed: {result.stderr}")
     else:
-        print(f"✅ Backup created at {filepath}")
+        print(f" Backup created at {filepath}")
 
 # === STEP 3: Insert Mapping ===
 def insert_mapping(domain, agent_id, is_active):
@@ -92,9 +92,9 @@ def insert_mapping(domain, agent_id, is_active):
         with conn.cursor() as cur:
             cur.execute(insert_sql, (domain, agent_id, is_active, now, now))
         conn.commit()
-        print(f"✅ Mapping inserted: {domain} → {agent_id}")
+        print(f" Mapping inserted: {domain} → {agent_id}")
     except Exception as e:
-        print("❌ Failed to insert mapping:", e)
+        print(" Failed to insert mapping:", e)
     finally:
         conn.close()
 
@@ -116,11 +116,11 @@ def delete_mapping(domain):
             rows = cur.execute(delete_sql, (domain,))
         conn.commit()
         if rows:
-            print(f"🗑️ Deleted existing record(s) for domain: {domain}")
+            print(f" Deleted existing record(s) for domain: {domain}")
         else:
-            print(f"ℹ️ No existing record found for domain: {domain}")
+            print(f" No existing record found for domain: {domain}")
     except Exception as e:
-        print("❌ Failed to delete mapping:", e)
+        print(" Failed to delete mapping:", e)
     finally:
         conn.close()
 
@@ -132,4 +132,4 @@ if __name__ == "__main__":
         # delete_mapping(domain)
         insert_mapping(domain, agent_id, is_active)
     except Exception as err:
-        print("❌ Error:", err)
+        print(" Error:", err)
