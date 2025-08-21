@@ -30,7 +30,7 @@ def is_apex_domain(domain: str):
 if len(sys.argv) > 1:
     custom_domain = sys.argv[1].strip().lower()
 else:
-    custom_domain = input("Enter your custom domain (e.g., portal.domain.com): ").strip().lower()
+    custom_domain = input("Enter your custom domain (e.g., www.your-domain.com): ").strip().lower()
 
 original_domain = custom_domain
 

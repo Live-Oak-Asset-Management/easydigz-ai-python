@@ -146,3 +146,7 @@ def run_dbkp(
     agent_id: str = Query(..., description="Agent ID for the domain")
 ):
     return run_script("dbkp.py", [domain, agent_id])
+
+@app.get("/run/checkStatus")
+def run_checkStatus(domain: str = Query(..., description="Custom domain")):
+    return run_script("checkStatus.py", [domain])
