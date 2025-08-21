@@ -2,6 +2,7 @@ import os
 import sys
 import platform
 import logging
+import json
 from fastapi import FastAPI, HTTPException, Query
 from subprocess import run, PIPE
 from dotenv import load_dotenv
@@ -91,7 +92,19 @@ def run_validate_dns(domain: str = Query(..., description="Custom domain to vali
 @app.get("/run/nginx_manager")
 def run_nginx_manager(domain: str = Query(..., description="Custom domain to add to nginx configuration")):
     logger.info(f"nginx_manager endpoint called with domain: {domain}")
-    return run_script("nginx_manager.py", [domain])
+    result = run_script("nginx_manager.py", [domain])
+    # Attempt to return the script's JSON stdout directly
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict) and "type" in payload and "message" in payload:
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse stdout as JSON: {e}")
+    # If parsing failed or no stdout, return an error JSON with details
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"type": "error", "message": err_msg}
 
 @app.get("/test/nginx_manager")
 def test_nginx_manager(domain: str = Query(..., description="Test nginx manager script")):
@@ -104,7 +117,17 @@ def test_nginx_manager(domain: str = Query(..., description="Test nginx manager 
 
 @app.get("/run/cors")
 def run_cors(domain: str = Query(..., description="Custom domain for CORS")):
-    return run_script("cors.py", [domain])
+    result = run_script("cors.py", [domain])
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict) and "type" in payload and "message" in payload:
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse CORS stdout as JSON: {e}")
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"type": "error", "message": err_msg}
 
 @app.get("/run/alb")
 def run_alb(domain: str = Query(..., description="Custom domain to add to ALB")):
