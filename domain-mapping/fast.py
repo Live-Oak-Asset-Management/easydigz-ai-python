@@ -24,11 +24,9 @@ if os.path.exists(env_path):
 def get_environment_config():
     """Get platform-specific configuration"""
     if platform.system() == "Windows":
-        # Windows development environment
         scripts_dir = os.path.dirname(os.path.abspath(__file__))
         python_bin = sys.executable
     else:
-        # Linux production environment - read from .env
         scripts_dir = os.getenv("SCRIPTS_DIR", "/home/ubuntu/easydigz-python/domain-mapping")
         python_bin = os.getenv("PYTHON_BIN", "/home/ubuntu/easydigz-python/venv/bin/python")
     
@@ -40,7 +38,9 @@ print(f"Scripts directory: {SCRIPTS_DIR}")
 print(f"Python binary: {PYTHON_BIN}")
 
 # === Script Executor ===
-def run_script(script_name: str, args: list = []):
+def run_script(script_name: str, args=None):
+    if args is None:
+        args = []
     script_path = os.path.join(SCRIPTS_DIR, script_name)
     
     logger.info(f"Executing script: {script_name} with args: {args}")
@@ -93,7 +93,6 @@ def run_validate_dns(domain: str = Query(..., description="Custom domain to vali
 def run_nginx_manager(domain: str = Query(..., description="Custom domain to add to nginx configuration")):
     logger.info(f"nginx_manager endpoint called with domain: {domain}")
     result = run_script("nginx_manager.py", [domain])
-    # Attempt to return the script's JSON stdout directly
     stdout = (result.get("stdout") or "").strip()
     if stdout:
         try:
@@ -102,18 +101,13 @@ def run_nginx_manager(domain: str = Query(..., description="Custom domain to add
                 return payload
         except Exception as e:
             logger.warning(f"Failed to parse stdout as JSON: {e}")
-    # If parsing failed or no stdout, return an error JSON with details
     err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
     return {"type": "error", "message": err_msg}
 
 @app.get("/test/nginx_manager")
 def test_nginx_manager(domain: str = Query(..., description="Test nginx manager script")):
-    """Test endpoint to check nginx_manager script directly"""
-    logger.info(f"Testing nginx_manager with domain: {domain}")
     script_path = os.path.join(SCRIPTS_DIR, "nginx_manager.py")
-    logger.info(f"Script exists: {os.path.exists(script_path)}")
     return {"script_exists": os.path.exists(script_path), "script_path": script_path, "domain": domain}
-
 
 @app.get("/run/cors")
 def run_cors(domain: str = Query(..., description="Custom domain for CORS")):
@@ -131,13 +125,6 @@ def run_cors(domain: str = Query(..., description="Custom domain for CORS")):
 
 @app.get("/run/alb")
 def run_alb(domain: str = Query(..., description="Custom domain to add to ALB")):
-    return {
-            "script": "alb.py",
-            "args": "",
-            "exit_code": "",
-            "stdout": "",
-            "stderr": ""
-        }
     return run_script("alb.py", [domain])
 
 @app.get("/run/dbkp")
@@ -150,3 +137,23 @@ def run_dbkp(
 @app.get("/run/checkStatus")
 def run_checkStatus(domain: str = Query(..., description="Custom domain")):
     return run_script("checkStatus.py", [domain])
+
+# === Restart Endpoint ===
+@app.post("/restart")
+def restart_service():
+    """Restart the FastAPI service via PM2"""
+    try:
+        result = run(
+            ["pm2", "restart", "easydigz-api-server"],
+            stdout=PIPE,
+            stderr=PIPE,
+            text=True
+        )
+        return {
+            "message": "Service restarted",
+            "exit_code": result.returncode,
+            "stdout": result.stdout.strip(),
+            "stderr": result.stderr.strip()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Restart failed: {str(e)}")
