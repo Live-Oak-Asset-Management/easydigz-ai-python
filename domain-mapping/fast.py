@@ -1,4 +1,5 @@
 import os, sys
+import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import platform
@@ -10,6 +11,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 import pymysql
 import asyncio
+import time
 
 # Set up logging (log to stdout for PM2 to capture)
 logging.basicConfig(
@@ -171,9 +173,16 @@ def run_autocf(
     domain: str = Query(..., description="Custom domain (e.g., portal.example.com)"),
     background_tasks: BackgroundTasks = None
 ):
+    logger.info(f"/run/autocf called for domain={domain}")
     # Run the script quickly and then start background polling
     res = run_script("autocf.py", [domain])  # returns fast
-    background_tasks.add_task(_poll_until_all_three_and_save, domain)
+    logger.info(f"autocf.py completed with exit_code={res.get('exit_code')} for domain={domain}")
+    if background_tasks is None:
+        logger.warning("BackgroundTasks is None; polling will not be scheduled.")
+    else:
+        logger.info("Scheduling background task: _poll_until_all_three_and_save")
+        background_tasks.add_task(_poll_until_all_three_and_save, domain)
+        logger.info("Background task scheduled")
     
     # Send quick response to the user
     res["status"] = "pending"  # Initial status
@@ -186,38 +195,56 @@ async def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_sec
     Exits early if we reach 'applied' first (still acceptable to save).
     """
     started = asyncio.get_event_loop().time()  # using async time for accurate delay tracking
-    logger.info(f"Started polling for domain {domain}")
+    logger.info(f"[poll] Started for domain={domain} max_seconds={max_seconds} every_seconds={every_seconds}")
 
     while asyncio.get_event_loop().time() - started < max_seconds:
-        logger.info(f"Polling attempt for {domain} at {time.strftime('%Y-%m-%d %H:%M:%S')}")
+        now_str = time.strftime('%Y-%m-%d %H:%M:%S')
+        attempt_num = int((asyncio.get_event_loop().time() - started) / every_seconds) + 1
+        logger.info(f"[poll] Attempt {attempt_num} at {now_str} for domain={domain}")
+
         # Replace with your custom hostname fetching logic
+        logger.info(f"[poll] Running checkStatus.py for domain={domain}")
         r = run_script("checkStatus.py", [domain])  # reuse your existing script call
         stdout = r.get("stdout") or ""
         exit_code = r.get("exit_code", 1)
+        logger.info(f"[poll] checkStatus exit_code={exit_code} len(stdout)={len(stdout)} domain={domain}")
 
         # Derive status from what CF currently returns
         derived = derive_status_from_obj(stdout)
-        logger.info(f"Derived status for {domain}: {derived}")
+        present = all_three_present(stdout)
+        logger.info(f"[poll] Derived status={derived} all_three_present={present} for domain={domain}")
 
         # Save only when all 3 records are found and script succeeded
-        if exit_code == 0 and all_three_present(stdout):
+        if exit_code == 0 and present:
+            logger.info(f"[poll] All 3 records present for {domain}; creating envelope and saving to DB")
             envelope = make_autocf_envelope(domain, r, status="generated")
+            try:
+                envelope_size = len(json.dumps(envelope, ensure_ascii=False))
+            except Exception:
+                envelope_size = -1
+            logger.info(f"[poll] Envelope prepared (bytes~{envelope_size}); calling _save_response_to_db for {domain}")
             _save_response_to_db(domain, envelope)
-            logger.info(f"All 3 records found for {domain}, saved to DB.")
+            logger.info(f"[poll] Save complete for {domain}; exiting (status=generated)")
             return
 
         # If CF shows 'active', it's safe to persist too (status: applied)
         if exit_code == 0 and derived == "applied":
+            logger.info(f"[poll] SSL Active for {domain}; creating envelope and saving to DB")
             envelope = make_autocf_envelope(domain, r, status="applied")
+            try:
+                envelope_size = len(json.dumps(envelope, ensure_ascii=False))
+            except Exception:
+                envelope_size = -1
+            logger.info(f"[poll] Envelope prepared (bytes~{envelope_size}); calling _save_response_to_db for {domain}")
             _save_response_to_db(domain, envelope)
-            logger.info(f"SSL Active for {domain}, saved to DB.")
+            logger.info(f"[poll] Save complete for {domain}; exiting (status=applied)")
             return
 
         # Log that we are still waiting
-        logger.info(f"Attempt {int((asyncio.get_event_loop().time() - started) / every_seconds)}: Waiting for SSL validation to complete for {domain}.")
+        logger.info(f"[poll] Attempt {attempt_num}: Waiting for SSL validation to complete for {domain} (status={derived})")
         await asyncio.sleep(every_seconds)  # Non-blocking sleep to allow the event loop to continue
 
-    logger.error(f"Timeout reached after {max_seconds} seconds of polling for {domain}.")
+    logger.error(f"[poll] Timeout reached after {max_seconds} seconds for {domain}")
 
 
 # Basic PG config (matches the style of your sample)
@@ -236,7 +263,9 @@ def _save_response_to_db(domain: str, envelope: dict):
     Updates domain_agent_mapping.validation_success_data for the given domain.
     Saves the exact envelope (args/script/stderr/stdout/exit_code), omitting 'status'.
     """
+    logger.info(f"[db] _save_response_to_db called for domain={domain}")
     if not domain:
+        logger.error("[db] domain is required but missing")
         raise ValueError("domain is required")
 
     # Mirror your stored shape exactly (drop 'status')
@@ -253,6 +282,7 @@ def _save_response_to_db(domain: str, envelope: dict):
 
     conn = None
     try:
+        logger.info("[db] Opening DB connection")
         conn = pymysql.connect(
             host=DB_CONFIG["host"],
             user=DB_CONFIG["user"],
@@ -262,24 +292,29 @@ def _save_response_to_db(domain: str, envelope: dict):
             charset="utf8mb4",
             autocommit=False,
         )
+        logger.info("[db] Connection established; executing UPDATE")
         with conn.cursor() as cur:
             cur.execute(sql, (payload_json, domain))
+            rowcount = cur.rowcount
+            logger.info(f"[db] UPDATE executed; rowcount={rowcount}")
         conn.commit()
+        logger.info("[db] Commit successful")
 
         # Optional: warn if no row was updated (i.e., domain not pre-inserted)
         if cur.rowcount == 0:
-            logger.warning(f"WARNING: No row updated for domain '{domain}'. Did you insert the mapping first?")
+            logger.warning(f"[db] WARNING: No row updated for domain '{domain}'. Did you insert the mapping first?")
         else:
-            logger.info(f"Validation payload saved for: {domain}")
+            logger.info(f"[db] Validation payload saved for: {domain}")
 
     except Exception as e:
         if conn:
             try: conn.rollback()
             except: pass
-        logger.error("Failed to save validation payload:", e)
+        logger.error(f"[db] Failed to save validation payload for domain={domain}: {e}")
     finally:
         if conn:
             conn.close()
+            logger.info("[db] Connection closed")
 
 @app.get("/test_polling")
 async def test_polling(domain: str):
