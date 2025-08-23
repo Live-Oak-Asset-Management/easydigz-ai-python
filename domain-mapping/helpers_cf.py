@@ -38,45 +38,35 @@ def is_apex(domain: str) -> bool:
 
 
 def _find_hostname_id(custom_domain: str) -> Optional[str]:
-    """Resolve a custom hostname id for a domain. Tries filtered list, full scan, and 'www.' for apex."""
-    # 1) filtered
+    """Resolve a custom hostname id for a domain. Now, only checks for the sanitized domain."""
+    
+    logger.info(f"[find_hostname_id] Checking for sanitized domain: {custom_domain}")
+
+    # 1) Try filtered list first (for sanitized domain)
     try:
-        resp = _cf.custom_hostnames.list(zone_id=ZONE_ID, params={"hostname": custom_domain})
+        logger.info(f"[find_hostname_id] Checking filtered list for domain: {custom_domain}")
+        resp = _cf.custom_hostnames.list(zone_id=ZONE_ID, hostname=custom_domain)  # We're using the sanitized domain directly now
         items = getattr(resp, "result", resp) or []
         if items:
+            logger.info(f"[find_hostname_id] Found hostname in filtered scan for: {custom_domain}")
             return items[0].id
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error(f"[find_hostname_id] Error during filtered scan for domain: {custom_domain}. Error: {e}")
 
-    # 2) full list
+    # 2) If filtered list fails, do a full list scan
     try:
+        logger.info(f"[find_hostname_id] Checking full list scan for domain: {custom_domain}")
         resp = _cf.custom_hostnames.list(zone_id=ZONE_ID)
         items = getattr(resp, "result", resp) or []
         for it in items:
             if getattr(it, "hostname", None) == custom_domain:
+                logger.info(f"[find_hostname_id] Found hostname in full scan for: {custom_domain}")
                 return it.id
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error(f"[find_hostname_id] Error during full list scan for domain: {custom_domain}. Error: {e}")
 
-    # 3) try www. if apex
-    if is_apex(custom_domain):
-        alt = "www." + custom_domain
-        try:
-            resp = _cf.custom_hostnames.list(zone_id=ZONE_ID, params={"hostname": alt})
-            items = getattr(resp, "result", resp) or []
-            if items:
-                return items[0].id
-        except Exception:
-            pass
-        try:
-            resp = _cf.custom_hostnames.list(zone_id=ZONE_ID)
-            items = getattr(resp, "result", resp) or []
-            for it in items:
-                if getattr(it, "hostname", None) == alt:
-                    return it.id
-        except Exception:
-            pass
-
+    # If no hostname was found
+    logger.info(f"[find_hostname_id] No hostname found for domain: {custom_domain}")
     return None
 
 

@@ -27,13 +27,8 @@ app = FastAPI()
 script_dir = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(script_dir, '.env')
 
-if not os.path.exists(env_path):
-    raise FileNotFoundError(f"env file not found at: {env_path}")
-
-load_dotenv(dotenv_path=env_path)
-
-ZONE_ID = os.getenv("CF_ZONE_ID")
-TOKEN = os.getenv("CF_TOKEN")
+if os.path.exists(env_path):
+    load_dotenv(dotenv_path=env_path)
 
 # === Platform-aware Configuration ===
 def get_environment_config():
@@ -193,9 +188,6 @@ def run_autocf(
     res["status"] = "pending"  # Initial status
     return res
 
-
-import requests
-
 async def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_seconds=10):
     """
     Polls checkStatus.py until all three records are visible in stdout.
@@ -205,54 +197,27 @@ async def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_sec
     started = asyncio.get_event_loop().time()  # using async time for accurate delay tracking
     logger.info(f"[poll] Started for domain={domain} max_seconds={max_seconds} every_seconds={every_seconds}")
 
-    # Check if the domain is apex, and if so, add 'www.' prefix
-    if domain.count('.') == 1:  # It's an apex domain
-        domain = "www." + domain
-        logger.info(f"[poll] Apex domain detected; using {domain}")
-
     while asyncio.get_event_loop().time() - started < max_seconds:
         now_str = time.strftime('%Y-%m-%d %H:%M:%S')
         attempt_num = int((asyncio.get_event_loop().time() - started) / every_seconds) + 1
         logger.info(f"[poll] Attempt {attempt_num} at {now_str} for domain={domain}")
 
-        # Fetch current state from Cloudflare directly (same path as test_polling)
-        try:
-            obj = get_custom_hostname_obj(domain)
-        except Exception as e:
-            logger.error(f"[poll] Error fetching custom hostname for {domain}: {e}")
-            obj = None
+        # Replace with your custom hostname fetching logic
+        logger.info(f"[poll] Running checkStatus.py for domain={domain}")
+        r = run_script("checkStatus.py", [domain])  # reuse your existing script call
+        stdout = r.get("stdout") or ""
+        exit_code = r.get("exit_code", 1)
+        logger.info(f"[poll] checkStatus exit_code={exit_code} len(stdout)={len(stdout)} domain={domain}")
 
-        if not obj:
-            logger.info(f"[poll] Custom hostname not found for {domain}; calling Cloudflare API")
-            # Make an API call to fetch the custom hostname again
-            try:
-                response = requests.get(
-                    f"https://api.cloudflare.com/client/v4/zones/{ZONE_ID}/custom_hostnames?hostname={domain}",
-                    headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
-                )
-                response.raise_for_status()  # Will raise an error if the status code is not 2xx
-                cloudflare_data = response.json()
-                logger.info(f"[poll] Cloudflare API response: {cloudflare_data}")
-
-                if cloudflare_data["success"] and cloudflare_data["result"]:
-                    obj = cloudflare_data["result"][0]  # Use the first result
-                    logger.info(f"[poll] Custom hostname found via API: {obj['hostname']}")
-                else:
-                    logger.error(f"[poll] Custom hostname not found in Cloudflare API response.")
-                    return {"status": "error", "message": "Custom hostname not found in Cloudflare API response."}
-            except requests.exceptions.RequestException as e:
-                logger.error(f"[poll] Error fetching custom hostname from Cloudflare API: {str(e)}")
-                return {"status": "error", "message": f"API Error: {str(e)}"}
-
-        # Derive status from CF object
-        derived = derive_status_from_obj(obj)
-        present = all_three_present(obj)
+        # Derive status from what CF currently returns
+        derived = derive_status_from_obj(stdout)
+        present = all_three_present(stdout)
         logger.info(f"[poll] Derived status={derived} all_three_present={present} for domain={domain}")
 
-        # Save only when all 3 records are found
-        if present:
+        # Save only when all 3 records are found and script succeeded
+        if exit_code == 0 and present:
             logger.info(f"[poll] All 3 records present for {domain}; creating envelope and saving to DB")
-            envelope = make_autocf_envelope(domain, obj, status="generated")
+            envelope = make_autocf_envelope(domain, r, status="generated")
             try:
                 envelope_size = len(json.dumps(envelope, ensure_ascii=False))
             except Exception:
@@ -262,10 +227,10 @@ async def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_sec
             logger.info(f"[poll] Save complete for {domain}; exiting (status=generated)")
             return
 
-        # If CF shows 'active', persist too (status: applied)
-        if derived == "applied":
+        # If CF shows 'active', it's safe to persist too (status: applied)
+        if exit_code == 0 and derived == "applied":
             logger.info(f"[poll] SSL Active for {domain}; creating envelope and saving to DB")
-            envelope = make_autocf_envelope(domain, obj, status="applied")
+            envelope = make_autocf_envelope(domain, r, status="applied")
             try:
                 envelope_size = len(json.dumps(envelope, ensure_ascii=False))
             except Exception:
