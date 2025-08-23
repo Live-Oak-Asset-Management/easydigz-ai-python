@@ -9,6 +9,7 @@ Helpers for Cloudflare Custom Hostnames:
 """
 
 import os
+import logging
 from typing import Optional, Tuple
 from dotenv import load_dotenv
 from cloudflare import Cloudflare
@@ -26,6 +27,9 @@ TOKEN = os.getenv("CF_TOKEN")
 SSL_PROXY_URL_DEFAULT = os.getenv("SSL_PROXY_URL", "ssl-proxy.easydigz.com")
 
 _cf = Cloudflare(api_token=TOKEN)
+
+# Module logger (inherits root config from the app)
+logger = logging.getLogger(__name__)
 
 
 # ---------------- core find/fetch ----------------
@@ -92,23 +96,41 @@ def all_three_present(obj, require_ownership_txt: bool = True) -> bool:
       - At least one SSL/ACME TXT present.
     (CNAME is always derivable: name = obj.hostname, value = SSL_PROXY_URL)
     """
+    host = getattr(obj, "hostname", "unknown")
+    logger.info(
+        f"[all_three_present] start host={host} require_ownership_txt={require_ownership_txt}"
+    )
     # Ownership
     have_ownership = True
     if require_ownership_txt:
         have_ownership = False
         ov = getattr(obj, "ownership_verification", None)
-        if ov and getattr(ov, "type", None) == "txt" and getattr(ov, "name", None) and getattr(ov, "value", None):
+        ov_type = getattr(ov, "type", None) if ov else None
+        ov_has_name = bool(getattr(ov, "name", None)) if ov else False
+        ov_has_value = bool(getattr(ov, "value", None)) if ov else False
+        if ov and ov_type == "txt" and ov_has_name and ov_has_value:
             have_ownership = True
+        logger.info(
+            f"[all_three_present] ownership check host={host} ov_type={ov_type} name_present={ov_has_name} value_present={ov_has_value} result={have_ownership}"
+        )
 
     # SSL/ACME
     have_ssl = False
     ssl = getattr(obj, "ssl", None)
     if ssl:
         vrs = getattr(ssl, "validation_records", []) or []
-        have_ssl = any(getattr(r, "txt_name", None) and getattr(r, "txt_value", None) for r in vrs) \
-                   or (hasattr(ssl, "txt_name") and hasattr(ssl, "txt_value"))
+        vr_count = len(vrs)
+        vr_with_txt = sum(1 for r in vrs if getattr(r, "txt_name", None) and getattr(r, "txt_value", None))
+        direct_txt = hasattr(ssl, "txt_name") and hasattr(ssl, "txt_value")
+        have_ssl = (vr_with_txt > 0) or direct_txt
+        ssl_status = getattr(ssl, "status", "unknown")
+        logger.info(
+            f"[all_three_present] ssl check host={host} ssl_status={ssl_status} vr_count={vr_count} vr_with_txt={vr_with_txt} direct_txt={direct_txt} result={have_ssl}"
+        )
 
-    return have_ownership and have_ssl
+    result = have_ownership and have_ssl
+    logger.info(f"[all_three_present] result host={host} -> {result}")
+    return result
 
 
 def build_dns_block(obj, ssl_proxy_url: Optional[str] = None) -> str:
