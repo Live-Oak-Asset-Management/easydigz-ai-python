@@ -9,12 +9,13 @@ from subprocess import run, PIPE
 from dotenv import load_dotenv
 from datetime import datetime
 import pymysql
+import asyncio
 
-# Set up logging
+# Set up logging (log to stdout for PM2 to capture)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    stream=sys.stdout  # Ensure logs go to stdout (for PM2 to capture)
+    stream=sys.stdout  # Ensures logs go to stdout (for PM2 to capture)
 )
 logger = logging.getLogger(__name__)
 
@@ -178,24 +179,25 @@ def run_autocf(
     res["status"] = "pending"  # Initial status
     return res
 
-def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_seconds=10):
+async def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_seconds=10):
     """
     Polls checkStatus.py until all three records are visible in stdout.
     Then saves the 'autocf-like' envelope with status 'generated'.
     Exits early if we reach 'applied' first (still acceptable to save).
     """
-    started = time.time()
+    started = asyncio.get_event_loop().time()  # using async time for accurate delay tracking
     logger.info(f"Started polling for domain {domain}")
 
-    while time.time() - started < max_seconds:
+    while asyncio.get_event_loop().time() - started < max_seconds:
         logger.info(f"Polling attempt for {domain} at {time.strftime('%Y-%m-%d %H:%M:%S')}")
-        r = run_script("checkStatus.py", [domain])  # reuse existing script call
+        # Replace with your custom hostname fetching logic
+        r = run_script("checkStatus.py", [domain])  # reuse your existing script call
         stdout = r.get("stdout") or ""
         exit_code = r.get("exit_code", 1)
 
-        # Derive status from what Cloudflare currently returns
+        # Derive status from what CF currently returns
         derived = derive_status_from_obj(stdout)
-        logger.info(f"Derived status: {derived}")
+        logger.info(f"Derived status for {domain}: {derived}")
 
         # Save only when all 3 records are found and script succeeded
         if exit_code == 0 and all_three_present(stdout):
@@ -212,11 +214,11 @@ def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_seconds=1
             return
 
         # Log that we are still waiting
-        logger.info(f"Attempt {int((time.time() - started) / every_seconds)}: Waiting for SSL validation to complete.")
-        time.sleep(every_seconds)
+        logger.info(f"Attempt {int((asyncio.get_event_loop().time() - started) / every_seconds)}: Waiting for SSL validation to complete for {domain}.")
+        await asyncio.sleep(every_seconds)  # Non-blocking sleep to allow the event loop to continue
 
-    # If timeout reached
     logger.error(f"Timeout reached after {max_seconds} seconds of polling for {domain}.")
+
 
 # Basic PG config (matches the style of your sample)
 # === DB CONFIGURATION ===
@@ -285,7 +287,7 @@ async def test_polling(domain: str):
     This is a test function to manually trigger the background polling
     and see if all 3 records are available.
     """
-    logger.info(f"Testing polling for domain: {domain}")
+    logger.info(f"Received request for test_polling with domain: {domain}")
 
     try:
         # Fetch custom hostname object from Cloudflare
