@@ -12,6 +12,7 @@ from datetime import datetime
 import pymysql
 import asyncio
 import time
+import requests
 
 # Set up logging (log to stdout for PM2 to capture)
 logging.basicConfig(
@@ -27,8 +28,13 @@ app = FastAPI()
 script_dir = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(script_dir, '.env')
 
-if os.path.exists(env_path):
-    load_dotenv(dotenv_path=env_path)
+if not os.path.exists(env_path):
+    raise FileNotFoundError(f"env file not found at: {env_path}")
+
+load_dotenv(dotenv_path=env_path)
+ZONE_ID = os.getenv("CF_ZONE_ID")
+TOKEN = os.getenv("CF_TOKEN")
+
 
 # === Platform-aware Configuration ===
 def get_environment_config():
@@ -174,12 +180,41 @@ def run_autocf(
     background_tasks: BackgroundTasks = None
 ):
     logger.info(f"/run/autocf called for domain={domain}")
+    
     # Run the script quickly and then start background polling
     res = run_script("autocf.py", [domain])  # returns fast
     logger.info(f"autocf.py completed with exit_code={res.get('exit_code')} for domain={domain}")
-    if background_tasks is None:
-        logger.warning("BackgroundTasks is None; polling will not be scheduled.")
-    else:
+
+    # Check for the existence of the custom hostname
+    obj = get_custom_hostname_obj(domain)
+
+    if not obj:
+        # Fallback logic if the custom hostname is not found
+        logger.info(f"[poll] Custom hostname not found for {domain}; calling Cloudflare API")
+        try:
+            response = requests.get(
+                f"https://api.cloudflare.com/client/v4/zones/{ZONE_ID}/custom_hostnames?hostname={domain}",
+                headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
+            )
+            response.raise_for_status()  # Will raise an error if the status code is not 2xx
+            cloudflare_data = response.json()
+            logger.info(f"[poll] Cloudflare API response: {cloudflare_data}")
+
+            # If the response contains the required records, proceed
+            if cloudflare_data["success"] and cloudflare_data["result"]:
+                # Create the object and proceed with the logic as usual
+                obj = cloudflare_data["result"][0]
+                logger.info(f"[poll] Custom hostname found via API: {obj['hostname']}")
+            else:
+                logger.error(f"[poll] Custom hostname not found in Cloudflare API response.")
+                return {"status": "error", "message": "Custom hostname not found."}
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"[poll] Error fetching custom hostname from Cloudflare API: {str(e)}")
+            return {"status": "error", "message": f"API Error: {str(e)}"}
+
+    # Now proceed with background tasks and database save
+    if background_tasks:
         logger.info("Scheduling background task: _poll_until_all_three_and_save")
         background_tasks.add_task(_poll_until_all_three_and_save, domain)
         logger.info("Background task scheduled")
@@ -210,9 +245,29 @@ async def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_sec
             obj = None
 
         if not obj:
-            logger.info(f"[poll] Custom hostname not found for {domain}; waiting...")
-            await asyncio.sleep(every_seconds)
-            continue
+            # Fallback logic if the custom hostname is not found
+            logger.info(f"[poll] Custom hostname not found for {domain}; calling Cloudflare API")
+            try:
+                response = requests.get(
+                    f"https://api.cloudflare.com/client/v4/zones/{ZONE_ID}/custom_hostnames?hostname={domain}",
+                    headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
+                )
+                response.raise_for_status()  # Will raise an error if the status code is not 2xx
+                cloudflare_data = response.json()
+                logger.info(f"[poll] Cloudflare API response: {cloudflare_data}")
+
+                # If the response contains the required records, proceed
+                if cloudflare_data["success"] and cloudflare_data["result"]:
+                    # Create the object and proceed with the logic as usual
+                    obj = cloudflare_data["result"][0]
+                    logger.info(f"[poll] Custom hostname found via API: {obj['hostname']}")
+                else:
+                    logger.error(f"[poll] Custom hostname not found in Cloudflare API response.")
+                    return {"status": "error", "message": "Custom hostname not found."}
+
+            except requests.exceptions.RequestException as e:
+                logger.error(f"[poll] Error fetching custom hostname from Cloudflare API: {str(e)}")
+                return {"status": "error", "message": f"API Error: {str(e)}"}
 
         # Derive status from CF object
         derived = derive_status_from_obj(obj)
@@ -250,7 +305,6 @@ async def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_sec
         await asyncio.sleep(every_seconds)  # Non-blocking sleep to allow the event loop to continue
 
     logger.error(f"[poll] Timeout reached after {max_seconds} seconds for {domain}")
-
 
 # Basic PG config (matches the style of your sample)
 # === DB CONFIGURATION ===
