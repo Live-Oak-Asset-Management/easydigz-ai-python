@@ -90,10 +90,10 @@ def manage_cors(domain: str):
             errors.append(msg)
 
     # Restart only PM2 process 3 so apps pick up updated envs
-    try:
-        restart_pm2("3")
-    except Exception as e:
-        _log(f"PM2 restart encountered an error: {e}")
+    #try:
+    #    restart_pm2("3")
+    #except Exception as e:
+    #    _log(f"PM2 restart encountered an error: {e}")
 
     if errors:
         return _json_error("; ".join(errors))
