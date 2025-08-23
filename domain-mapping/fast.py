@@ -202,22 +202,27 @@ async def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_sec
         attempt_num = int((asyncio.get_event_loop().time() - started) / every_seconds) + 1
         logger.info(f"[poll] Attempt {attempt_num} at {now_str} for domain={domain}")
 
-        # Replace with your custom hostname fetching logic
-        logger.info(f"[poll] Running checkStatus.py for domain={domain}")
-        r = run_script("checkStatus.py", [domain])  # reuse your existing script call
-        stdout = r.get("stdout") or ""
-        exit_code = r.get("exit_code", 1)
-        logger.info(f"[poll] checkStatus exit_code={exit_code} len(stdout)={len(stdout)} domain={domain}")
+        # Fetch current state from Cloudflare directly (same path as test_polling)
+        try:
+            obj = get_custom_hostname_obj(domain)
+        except Exception as e:
+            logger.error(f"[poll] Error fetching custom hostname for {domain}: {e}")
+            obj = None
 
-        # Derive status from what CF currently returns
-        derived = derive_status_from_obj(stdout)
-        present = all_three_present(stdout)
+        if not obj:
+            logger.info(f"[poll] Custom hostname not found for {domain}; waiting...")
+            await asyncio.sleep(every_seconds)
+            continue
+
+        # Derive status from CF object
+        derived = derive_status_from_obj(obj)
+        present = all_three_present(obj)
         logger.info(f"[poll] Derived status={derived} all_three_present={present} for domain={domain}")
 
-        # Save only when all 3 records are found and script succeeded
-        if exit_code == 0 and present:
+        # Save only when all 3 records are found
+        if present:
             logger.info(f"[poll] All 3 records present for {domain}; creating envelope and saving to DB")
-            envelope = make_autocf_envelope(domain, r, status="generated")
+            envelope = make_autocf_envelope(domain, obj, status="generated")
             try:
                 envelope_size = len(json.dumps(envelope, ensure_ascii=False))
             except Exception:
@@ -227,10 +232,10 @@ async def _poll_until_all_three_and_save(domain: str, max_seconds=900, every_sec
             logger.info(f"[poll] Save complete for {domain}; exiting (status=generated)")
             return
 
-        # If CF shows 'active', it's safe to persist too (status: applied)
-        if exit_code == 0 and derived == "applied":
+        # If CF shows 'active', persist too (status: applied)
+        if derived == "applied":
             logger.info(f"[poll] SSL Active for {domain}; creating envelope and saving to DB")
-            envelope = make_autocf_envelope(domain, r, status="applied")
+            envelope = make_autocf_envelope(domain, obj, status="applied")
             try:
                 envelope_size = len(json.dumps(envelope, ensure_ascii=False))
             except Exception:
@@ -301,7 +306,7 @@ def _save_response_to_db(domain: str, envelope: dict):
         logger.info("[db] Commit successful")
 
         # Optional: warn if no row was updated (i.e., domain not pre-inserted)
-        if cur.rowcount == 0:
+        if rowcount == 0:
             logger.warning(f"[db] WARNING: No row updated for domain '{domain}'. Did you insert the mapping first?")
         else:
             logger.info(f"[db] Validation payload saved for: {domain}")
