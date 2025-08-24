@@ -4,6 +4,13 @@ import sys
 import json
 from cloudflare import Cloudflare
 from dotenv import load_dotenv
+import requests
+from types import SimpleNamespace
+from helpers_cf import get_custom_hostname_obj
+
+
+def _log(msg: str):
+    print(msg, file=sys.stderr)
 
 # --- Load environment ---
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -26,30 +33,41 @@ else:
     sys.exit(1)
 
 try:
-    # List all custom hostnames for the zone
-    hostnames_response = client.custom_hostnames.list(zone_id=ZONE_ID)
+    # Prefer helper that directly finds the object
+    hostname_obj = get_custom_hostname_obj(custom_domain)
 
-    # SDK returns a pydantic model with .result
-    if hasattr(hostnames_response, "result"):
-        hostnames = hostnames_response.result
-    else:
-        hostnames = hostnames_response
+    # Fallback to REST API if not found via helper/SDK
+    if not hostname_obj:
+        _log(f"[checkStatus] Helper did not find hostname for {custom_domain}; calling Cloudflare REST API")
+        try:
+            resp = requests.get(
+                f"https://api.cloudflare.com/client/v4/zones/{ZONE_ID}/custom_hostnames",
+                params={"hostname": custom_domain},
+                headers={
+                    "Authorization": f"Bearer {TOKEN}",
+                    "Content-Type": "application/json",
+                },
+                timeout=20,
+            )
+            resp.raise_for_status()
+            data = resp.json() or {}
+            _log(f"[checkStatus] REST API success={data.get('success')} result_count={len(data.get('result') or [])}")
+            if data.get("success") and (data.get("result") or []):
+                # Convert first result dict to attribute-style object recursively
+                def to_obj(d):
+                    if isinstance(d, dict):
+                        return SimpleNamespace(**{k: to_obj(v) for k, v in d.items()})
+                    if isinstance(d, list):
+                        return [to_obj(x) for x in d]
+                    return d
 
-    existing_id = None
-    for hostname in hostnames:
-        if getattr(hostname, "hostname", None) == custom_domain:
-            existing_id = hostname.id
-            break
-
-    if not existing_id:
-        print(json.dumps({"type": "error", "message": f"Hostname '{custom_domain}' not found"}))
-        sys.exit(1)
-
-    # Fetch full hostname details
-    hostname_obj = client.custom_hostnames.get(
-        custom_hostname_id=existing_id,
-        zone_id=ZONE_ID
-    )
+                hostname_obj = to_obj((data.get("result") or [])[0])
+            else:
+                print(json.dumps({"type": "error", "message": "Custom hostname not found."}))
+                sys.exit(1)
+        except requests.RequestException as e:
+            print(json.dumps({"type": "error", "message": f"API Error: {str(e)}"}))
+            sys.exit(1)
 
     # --- Parse statuses ---
     ssl_status = getattr(hostname_obj.ssl, "status", "unknown")
