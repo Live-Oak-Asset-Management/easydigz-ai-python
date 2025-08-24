@@ -3,6 +3,8 @@ from cloudflare import Cloudflare
 import sys
 import json
 from dotenv import load_dotenv
+import requests
+from types import SimpleNamespace
 
 # Add helpers to normalize domains and generate www/non-www variants
 
@@ -57,6 +59,43 @@ def delete_custom_hostname(custom_domain):
 
     client = Cloudflare(api_token=token)
 
+    def _to_obj(d):
+        if isinstance(d, dict):
+            return SimpleNamespace(**{k: _to_obj(v) for k, v in d.items()})
+        if isinstance(d, list):
+            return [_to_obj(x) for x in d]
+        return d
+
+    def _fallback_find_hostname(ezd_zone_id, token, target_hostname):
+        """Try SDK filtered list and REST API to find hostname id when not found in full scan."""
+        # 1) SDK filtered list
+        try:
+            resp = client.custom_hostnames.list(zone_id=ezd_zone_id, params={"hostname": target_hostname})
+            items = getattr(resp, "result", resp) or []
+            if items:
+                return getattr(items[0], "id", None), items[0]
+        except Exception:
+            pass
+        # 2) REST fallback
+        try:
+            r = requests.get(
+                f"https://api.cloudflare.com/client/v4/zones/{ezd_zone_id}/custom_hostnames",
+                params={"hostname": target_hostname},
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json",
+                },
+                timeout=20,
+            )
+            r.raise_for_status()
+            data = r.json() or {}
+            if data.get("success") and (data.get("result") or []):
+                first = (data.get("result") or [])[0]
+                return first.get("id"), _to_obj(first)
+        except Exception:
+            pass
+        return None, None
+
     try:
         target_hostname = normalize_domain(custom_domain)
         # List all custom hostnames for the zone
@@ -84,7 +123,12 @@ def delete_custom_hostname(custom_domain):
                 break
         
         if not hostname_id:
-            message = f"Custom hostname '{target_hostname}' not found in Cloudflare."
+            # Fallback attempts: SDK filtered list and REST API
+            print(f"Fallback: attempting filtered lookup for '{target_hostname}'")
+            hostname_id, hostname_details = _fallback_find_hostname(ezd_zone_id, token, target_hostname)
+
+        if not hostname_id:
+            message = f"Custom hostname '{target_hostname}' not found in Cloudflare (including fallback)."
             print(message)
             result = {
                 "success": True,
@@ -102,28 +146,82 @@ def delete_custom_hostname(custom_domain):
         
         # Show SSL details if available
         ssl_status = "unknown"
-        if hasattr(hostname_details, "ssl") and getattr(hostname_details, "ssl"):
-            try:
-                ssl_status = hostname_details.ssl.status
-            except Exception:
-                pass
-            print(f"- SSL certificate (status: {ssl_status})")
+        try:
+            if hasattr(hostname_details, "ssl") and getattr(hostname_details, "ssl"):
+                ssl_status = getattr(getattr(hostname_details, "ssl"), "status", "unknown")
+                print(f"- SSL certificate (status: {ssl_status})")
+            elif isinstance(hostname_details, dict) and hostname_details.get("ssl"):
+                ssl_status = hostname_details.get("ssl", {}).get("status", "unknown")
+                print(f"- SSL certificate (status: {ssl_status})")
+        except Exception:
+            pass
         
         # Show origin server if available
         origin_server = None
-        if hasattr(hostname_details, "custom_origin_server"):
-            origin_server = hostname_details.custom_origin_server
-            print(f"- CNAME pointing to: {origin_server}")
+        try:
+            if hasattr(hostname_details, "custom_origin_server"):
+                origin_server = getattr(hostname_details, "custom_origin_server")
+                print(f"- CNAME pointing to: {origin_server}")
+            elif isinstance(hostname_details, dict):
+                origin_server = hostname_details.get("custom_origin_server")
+                if origin_server:
+                    print(f"- CNAME pointing to: {origin_server}")
+        except Exception:
+            pass
         
         print("Auto-confirming deletion...")
-        # Delete the custom hostname
-        response = client.custom_hostnames.delete(
-            zone_id=ezd_zone_id,
-            custom_hostname_id=hostname_id
-        )
-        
+        # Delete the custom hostname (SDK first, then REST fallback)
+        deletion_success = False
+        response_payload = None
+        try:
+            response = client.custom_hostnames.delete(
+                zone_id=ezd_zone_id,
+                custom_hostname_id=hostname_id
+            )
+            deletion_success = True
+            response_payload = str(response)
+            print("SDK delete succeeded")
+        except Exception as e:
+            print(f"SDK delete failed: {e}")
+            try:
+                # Attempt REST API deletion as fallback
+                rest = requests.delete(
+                    f"https://api.cloudflare.com/client/v4/zones/{ezd_zone_id}/custom_hostnames/{hostname_id}",
+                    headers={
+                        "Authorization": f"Bearer {token}",
+                        "Content-Type": "application/json",
+                    },
+                    timeout=20,
+                )
+                try:
+                    rest_json = rest.json()
+                except Exception:
+                    rest_json = {"raw": rest.text}
+                response_payload = rest_json
+                if rest.ok and isinstance(rest_json, dict) and rest_json.get("success"):
+                    deletion_success = True
+                    print("REST delete succeeded")
+                else:
+                    print(f"REST delete failed: status={rest.status_code} body={rest_json}")
+            except Exception as re:
+                print(f"REST delete exception: {re}")
+
+        if not deletion_success:
+            # Build error result preserving structure
+            error_msg = f"Failed to delete custom hostname '{target_hostname}' via SDK and REST"
+            print(error_msg)
+            result = {
+                "success": False,
+                "message": error_msg,
+                "hostname": target_hostname,
+                "id": hostname_id,
+                "error": response_payload,
+            }
+            print(json.dumps(result))
+            return result
+
         print(f"Successfully deleted custom hostname: {target_hostname}")
-        print(f"Response: {response}")
+        print(f"Response: {response_payload}")
         
         result = {
             "success": True,
