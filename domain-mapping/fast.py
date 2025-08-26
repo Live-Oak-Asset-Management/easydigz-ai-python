@@ -144,6 +144,187 @@ def run_dbkp(
 def run_checkStatus(domain: str = Query(..., description="Custom domain")):
     return run_script("checkStatus.py", [domain])
 
+# === Auth0 Management Endpoints ===
+@app.get("/run/auth0_add")
+def run_auth0_add(
+    domain: str = Query(..., description="Custom domain to add to Auth0"),
+    client_id: str = Query(None, description="Optional Auth0 client ID to update")
+):
+    args = ["add", domain]
+    if client_id:
+        args.append(client_id)
+    result = run_script("auth0_manager.py", args)
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict):
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse auth0_add stdout as JSON: {e}")
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"success": False, "message": err_msg}
+
+
+@app.get("/run/auth0_remove")
+def run_auth0_remove(
+    domain: str = Query(..., description="Custom domain to remove from Auth0"),
+    client_id: str = Query(None, description="Optional Auth0 client ID to update")
+):
+    args = ["remove", domain]
+    if client_id:
+        args.append(client_id)
+    result = run_script("auth0_manager.py", args)
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict):
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse auth0_remove stdout as JSON: {e}")
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"success": False, "message": err_msg}
+
+
+@app.get("/run/auth0_list")
+def run_auth0_list(client_id: str = Query(None, description="Optional Auth0 client ID to inspect")):
+    args = ["list"]
+    if client_id:
+        args.append(client_id)
+    result = run_script("auth0_manager.py", args)
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict):
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse auth0_list stdout as JSON: {e}")
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"success": False, "message": err_msg}
+
+
+@app.get("/run/auth0_canonicalize")
+def run_auth0_canonicalize(client_id: str = Query(None, description="Optional Auth0 client ID to canonicalize")):
+    args = ["canonicalize"]
+    if client_id:
+        args.append(client_id)
+    result = run_script("auth0_manager.py", args)
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict):
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse auth0_canonicalize stdout as JSON: {e}")
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"success": False, "message": err_msg}
+
+
+@app.get("/run/auth0_populate")
+def run_auth0_populate(client_id: str = Query(None, description="Optional Auth0 client ID to populate logout/origins from callbacks")):
+    args = ["populate"]
+    if client_id:
+        args.append(client_id)
+    result = run_script("auth0_manager.py", args)
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict):
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse auth0_populate stdout as JSON: {e}")
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"success": False, "message": err_msg}
+
+
+@app.get("/run/auth0_set_origins")
+def run_auth0_set_origins(
+    origins: str = Query(..., description="Comma-separated list of web origins to set"),
+    client_id: str = Query(None, description="Optional Auth0 client ID")
+):
+    args = ["set-origins", origins]
+    if client_id:
+        args.append(client_id)
+    result = run_script("auth0_manager.py", args)
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict):
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse auth0_set_origins stdout as JSON: {e}")
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"success": False, "message": err_msg}
+
+
+@app.get("/run/auth0_add_domain")
+def run_auth0_add_domain(
+    domain: str = Query(..., description="Full domain URL to add to all Auth0 sections (e.g., https://crackiq.com)"),
+    client_id: str = Query(None, description="Optional Auth0 client ID")
+):
+    args = ["add-all", domain]
+    if client_id:
+        args.append(client_id)
+    result = run_script("auth0_manager.py", args)
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict):
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse auth0_add_domain stdout as JSON: {e}")
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"success": False, "message": err_msg}
+
+
+@app.get("/run/auth0_remove_domain")
+def run_auth0_remove_domain(
+    domain: str = Query(..., description="Full domain URL to remove from all Auth0 sections (e.g., https://crackiq.com)"),
+    client_id: str = Query(None, description="Optional Auth0 client ID")
+):
+    args = ["remove-all", domain]
+    if client_id:
+        args.append(client_id)
+    result = run_script("auth0_manager.py", args)
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict):
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse auth0_remove_domain stdout as JSON: {e}")
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"success": False, "message": err_msg}
+
+
+@app.get("/run/auth_update")
+def run_auth_update(
+    domain: str = Query(..., description="Full domain URL to add to all Auth0 sections (e.g., https://crackiq.com)"),
+    client_id: str = Query(None, description="Optional Auth0 client ID")
+):
+    """Admin route to add domain to all Auth0 sections (callbacks, logout URLs, web origins)"""
+    args = ["add-all", domain]
+    if client_id:
+        args.append(client_id)
+    result = run_script("auth0_manager.py", args)
+    stdout = (result.get("stdout") or "").strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict):
+                return payload
+        except Exception as e:
+            logger.warning(f"Failed to parse auth_update stdout as JSON: {e}")
+    err_msg = (result.get("stderr") or result.get("stdout") or "Unknown error").strip()
+    return {"success": False, "message": err_msg}
+
 # === Restart Endpoint ===
 @app.post("/restart")
 def restart_service():

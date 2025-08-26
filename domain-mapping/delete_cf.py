@@ -6,6 +6,13 @@ from dotenv import load_dotenv
 import requests
 from types import SimpleNamespace
 
+# Import Auth0 management for domain deletion
+try:
+    from auth0_manager import remove_domain_from_all_sections
+except ImportError:
+    print("Warning: Could not import auth0_manager. Auth0 deletion will be skipped.")
+    remove_domain_from_all_sections = None
+
 # Add helpers to normalize domains and generate www/non-www variants
 
 def normalize_domain(d: str) -> str:
@@ -30,8 +37,67 @@ def domain_variants(custom_domain: str):
     return variants
 
 
+def delete_from_auth0(custom_domain: str):
+    """Delete domain from Auth0 before Cloudflare deletion"""
+    if not remove_domain_from_all_sections:
+        print("Skipping Auth0 deletion - auth0_manager not available")
+        return {"success": True, "message": "Auth0 manager not available", "skipped": True}
+    
+    try:
+        # Normalize domain and try both http and https variants
+        normalized_domain = normalize_domain(custom_domain)
+        auth0_results = []
+        
+        for protocol in ["https", "http"]:
+            domain_url = f"{protocol}://{normalized_domain}"
+            print(f"Attempting to remove {domain_url} from Auth0...")
+            result = remove_domain_from_all_sections(domain_url)
+            auth0_results.append(result)
+            
+            # If we successfully removed something, we're done
+            if result.get("success") and result.get("status") != "not_found":
+                print(f"Successfully removed {domain_url} from Auth0")
+                return {
+                    "success": True,
+                    "message": f"Removed {domain_url} from Auth0",
+                    "details": result
+                }
+        
+        # Check if any removal was successful (not just "not found")
+        successful_removals = [r for r in auth0_results if r.get("success") and r.get("status") != "not_found"]
+        if successful_removals:
+            return {
+                "success": True,
+                "message": "Domain removed from Auth0",
+                "details": successful_removals
+            }
+        
+        # All attempts resulted in "not found" - that's fine
+        print(f"Domain {normalized_domain} not found in Auth0 configuration")
+        return {
+            "success": True,
+            "message": f"Domain {normalized_domain} not found in Auth0 - nothing to remove",
+            "status": "not_found"
+        }
+        
+    except Exception as e:
+        print(f"Error removing domain from Auth0: {e}")
+        return {
+            "success": False,
+            "message": f"Auth0 deletion failed: {e}",
+            "error": str(e)
+        }
+
+
 def delete_custom_hostname(custom_domain):
     """Delete a custom hostname from Cloudflare"""
+    
+    # FIRST: Delete from Auth0 before Cloudflare
+    print(f"\n=== Step 1: Removing {custom_domain} from Auth0 ===")
+    auth0_result = delete_from_auth0(custom_domain)
+    print(f"Auth0 deletion result: {auth0_result.get('message', 'Unknown')}")
+    
+    print(f"\n=== Step 2: Removing {custom_domain} from Cloudflare ===")
     
     script_dir = os.path.dirname(os.path.abspath(__file__))
     env_path = os.path.join(script_dir, '.env')
@@ -52,7 +118,8 @@ def delete_custom_hostname(custom_domain):
         result = {
             "success": False,
             "message": error_msg,
-            "hostname": custom_domain
+            "hostname": custom_domain,
+            "auth0_deletion": auth0_result
         }
         print(json.dumps(result))
         return result
@@ -134,7 +201,8 @@ def delete_custom_hostname(custom_domain):
                 "success": True,
                 "message": f"No custom hostname found for '{target_hostname}' - nothing to delete.",
                 "hostname": target_hostname,
-                "status": "not_found"
+                "status": "not_found",
+                "auth0_deletion": auth0_result
             }
             print(json.dumps(result))
             return result
@@ -216,6 +284,7 @@ def delete_custom_hostname(custom_domain):
                 "hostname": target_hostname,
                 "id": hostname_id,
                 "error": response_payload,
+                "auth0_deletion": auth0_result,
             }
             print(json.dumps(result))
             return result
@@ -228,6 +297,7 @@ def delete_custom_hostname(custom_domain):
             "message": f"Successfully deleted custom hostname: {target_hostname}",
             "hostname": target_hostname,
             "id": hostname_id,
+            "auth0_deletion": auth0_result,
             "details": {
                 "ssl_status_before_deletion": ssl_status,
                 "origin_server_before_deletion": origin_server,
@@ -251,7 +321,8 @@ def delete_custom_hostname(custom_domain):
             "success": False,
             "message": error_msg,
             "hostname": custom_domain,
-            "error": str(e)
+            "error": str(e),
+            "auth0_deletion": auth0_result
         }
         print(json.dumps(result))
         return result
