@@ -231,9 +231,14 @@ def update_client_urls(
             added_callbacks.append(root_callback)
 
         base_url = f"{protocol}://{d}"
+        # Add both base domain and /login for logout URLs
         if base_url not in logout_urls:
             logout_urls.append(base_url)
             added_logout_urls.append(base_url)
+        login_url = f"{base_url}/login"
+        if login_url not in logout_urls:
+            logout_urls.append(login_url)
+            added_logout_urls.append(login_url)
         if base_url not in web_origins:
             web_origins.append(base_url)
             added_web_origins.append(base_url)
@@ -333,9 +338,11 @@ def remove_client_urls(
             f"https://{d}/callback",
             f"https://{d}/",
             f"https://{d}",
+            f"https://{d}/login",
             f"http://{d}/callback",
             f"http://{d}/",
             f"http://{d}",
+            f"http://{d}/login",
         ]
         for p in list(patterns):
             if p in callbacks:
@@ -346,6 +353,10 @@ def remove_client_urls(
             if base in logout_urls:
                 logout_urls.remove(base)
                 removed_logout_urls.append(base)
+            login_url = f"{base}/login"
+            if login_url in logout_urls:
+                logout_urls.remove(login_url)
+                removed_logout_urls.append(login_url)
             if base in web_origins:
                 web_origins.remove(base)
                 removed_web_origins.append(base)
@@ -448,8 +459,9 @@ def derive_logout_and_origins_from_callbacks(callbacks: List[str]) -> tuple[List
             if not u.scheme or not u.netloc:
                 continue
             base_url = f"{u.scheme}://{u.netloc}"
-            logout_url = f"{u.scheme}://{u.netloc}/login"
-            logout_urls.add(logout_url)
+            # include both base and /login in logout URLs
+            logout_urls.add(base_url)
+            logout_urls.add(f"{base_url}/login")
             web_origins.add(base_url)
         except Exception:
             continue
@@ -513,7 +525,10 @@ def add_domain_to_all_sections(
         callbacks.append(callback_url)
         added_callbacks.append(callback_url)
 
-    # Logout URLs: exact base URL + /login
+    # Logout URLs: include both base URL and /login
+    if base_url not in logout_urls:
+        logout_urls.append(base_url)
+        added_logout_urls.append(base_url)
     logout_url = f"{base_url}/login"
     if logout_url not in logout_urls:
         logout_urls.append(logout_url)
@@ -642,7 +657,10 @@ def remove_domain_from_all_sections(
         callbacks.remove(callback_url)
         removed_callbacks.append(callback_url)
 
-    # Remove logout URLs: exact base URL + /login
+    # Remove logout URLs: remove both base URL and /login
+    if base_url in logout_urls:
+        logout_urls.remove(base_url)
+        removed_logout_urls.append(base_url)
     logout_url = f"{base_url}/login"
     if logout_url in logout_urls:
         logout_urls.remove(logout_url)
