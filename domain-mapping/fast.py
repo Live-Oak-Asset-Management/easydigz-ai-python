@@ -328,12 +328,13 @@ def run_auth_update(
     return {"success": False, "message": err_msg}
 
 # === Restart Endpoint ===
+PM2_SERVICE_NAME = os.getenv("PM2_SERVICE_NAME")
 @app.post("/restart")
 def restart_service():
     """Restart the FastAPI service via PM2"""
     try:
         result = run(
-            ["pm2", "restart", "easydigz-api-server"],
+            ["pm2", "restart", PM2_SERVICE_NAME],
             stdout=PIPE,
             stderr=PIPE,
             text=True
