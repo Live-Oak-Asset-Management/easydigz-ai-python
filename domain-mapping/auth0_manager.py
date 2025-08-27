@@ -49,6 +49,19 @@ AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN", "").strip()
 AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID", "").strip()
 AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET", "").strip()
 AUTH0_APP_CLIENT_ID = os.getenv("AUTH0_APP_CLIENT_ID", "").strip()
+# Optional space-separated list of scopes to request for Management API tokens
+AUTH0_MGMT_SCOPE = os.getenv("AUTH0_MGMT_SCOPE", "read:clients update:clients").strip()
+
+# Warn if likely misconfiguration: using same client for M2M and target app
+try:
+    if AUTH0_CLIENT_ID and AUTH0_APP_CLIENT_ID and AUTH0_CLIENT_ID == AUTH0_APP_CLIENT_ID:
+        print(
+            "Warning: AUTH0_CLIENT_ID (M2M) and AUTH0_APP_CLIENT_ID (target app) are the same. "
+            "This often causes token errors. Use a Machine-to-Machine application's credentials for AUTH0_CLIENT_ID/SECRET ",
+            file=sys.stderr,
+        )
+except Exception:
+    pass
 
 # --- Token cache ---
 _token_cache: Dict[str, Optional[str]] = {
@@ -100,6 +113,9 @@ def get_management_token() -> Optional[str]:
             "audience": f"https://{AUTH0_DOMAIN}/api/v2/",
             "grant_type": "client_credentials",
         }
+        # Optionally request specific scopes (must be authorized for the M2M app)
+        if AUTH0_MGMT_SCOPE:
+            payload["scope"] = AUTH0_MGMT_SCOPE
         resp = requests.post(url, json=payload, timeout=25)
         resp.raise_for_status()
         data = resp.json() or {}
@@ -111,6 +127,23 @@ def get_management_token() -> Optional[str]:
         # cache token (refresh 60s before expiry)
         _token_cache["access_token"] = token
         _token_cache["expires_at"] = datetime.now() + timedelta(seconds=max(0, expires_in - 60))
+        # Best-effort debug of token contents (audience), without external deps
+        try:
+            import base64, json as _json
+            parts = token.split(".")
+            if len(parts) >= 2:
+                def _b64pad(s: str) -> str:
+                    return s + "=" * ((4 - len(s) % 4) % 4)
+                payload_raw = base64.urlsafe_b64decode(_b64pad(parts[1]))
+                payload_json = _json.loads(payload_raw.decode("utf-8", errors="ignore"))
+                aud = payload_json.get("aud")
+                scopes = payload_json.get("scope") or payload_json.get("permissions")
+                print(
+                    f"Token debug: aud={aud} scopes={scopes}",
+                    file=sys.stderr,
+                )
+        except Exception:
+            pass
         return token
     except requests.RequestException as e:
         print(f"Error obtaining Auth0 management token: {e}")

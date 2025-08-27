@@ -68,11 +68,13 @@ def run_script(script_name: str, args=None):
     
     try:
         logger.info(f"Running command: {[PYTHON_BIN, script_path] + args}")
+        logger.info(f"Working directory: {SCRIPTS_DIR}")
         result = run(
             [PYTHON_BIN, script_path] + args,
             stdout=PIPE,
             stderr=PIPE,
-            text=True
+            text=True,
+            cwd=SCRIPTS_DIR  # Set working directory to scripts directory
         )
         
         logger.info(f"Script exit code: {result.returncode}")
