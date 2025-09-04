@@ -654,6 +654,212 @@ async def ez_search(request: EzSearchRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+class FilterSearchRequest(BaseModel):
+    query: str
+
+@app.post("/filterSearch")
+async def filter_search_endpoint(request: FilterSearchRequest):
+    try:
+        client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+        filter_search_tool = {
+            "type": "function",
+            "function": {
+                "name": "filter_search",
+                "description": "Perform a filter-based search for properties or items using defined criteria",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "fieldName": {
+                            "type": "string",
+                            "description": "The field to apply the filter on. Must be one of the valid field names.",
+                            "enum": [
+                                "AboveGradeFinishedArea",
+                                "GarageSpaces",
+                                "LotSizeAcres",
+                                "BedsTotal",
+                                "PublicRemarks",
+                                "PostalCode",
+                                "UnparsedAddress",
+                                "BathroomsTotalDecimal",
+                                "HighSchool",
+                                "MiddleOrJuniorSchool",
+                                "ElementarySchool",
+                                "HorseAmenities.Other",
+                                "WaterfrontFeatures.Creek",
+                                "WaterfrontFeatures.Stream",
+                                "WaterfrontFeatures.Lake",
+                                "WaterfrontFeatures.River Front",
+                                "WaterfrontFeatures.Beach Access",
+                                "WaterfrontFeatures.Canal Front",
+                                "WaterfrontFeatures.Ocean Front",
+                                "ArchitecturalStyle.Bungalow",
+                                "ArchitecturalStyle.A-Frame",
+                                "ArchitecturalStyle.Contemporary",
+                                "ArchitecturalStyle.Williamsburg",
+                                "ArchitecturalStyle.Cape Cod",
+                                "ArchitecturalStyle.Farm House",
+                                "ArchitecturalStyle.Colonial",
+                                "ArchitecturalStyle.Warehouse",
+                                "ArchitecturalStyle.Georgian",
+                                "ArchitecturalStyle.Tudor",
+                                "ArchitecturalStyle.Spanish",
+                                "ArchitecturalStyle.Victorian",
+                                "ArchitecturalStyle.Rustic",
+                                "ArchitecturalStyle.Craftsman",
+                                "ArchitecturalStyle.Deck House",
+                                "ArchitecturalStyle.Log Home",
+                                "ArchitecturalStyle.French Province",
+                                "ArchitecturalStyle.Charleston",
+                                "ArchitecturalStyle.Modernist",
+                                "ArchitecturalStyle.Cottage",
+                                "ArchitecturalStyle.Geodesic",
+                                "ArchitecturalStyle.National Historic Designation",
+                                "ArchitecturalStyle.Local Historic Designation",
+                                "ArchitecturalStyle.State Historic Designation",
+                                "ArchitecturalStyle.Log",
+                                "PoolFeatures.Private",
+                                "PoolFeatures.Swimming Pool Com/Fee",
+                                "PoolFeatures.None",
+                                "PoolFeatures.Association",
+                                "PoolFeatures.Fenced",
+                                "PoolFeatures.Above Ground",
+                                "PoolFeatures.Tile",
+                                "PoolFeatures.Outdoor Pool",
+                                "PoolFeatures.Pool/Spa Combo",
+                                "PoolFeatures.Gunite",
+                                "PoolFeatures.Filtered",
+                                "PoolFeatures.Gas Heat",
+                                "PoolFeatures.Indoor",
+                                "PoolFeatures.Waterfall",
+                                "ParkingFeatures.Garage",
+                                "ParkingFeatures.Covered",
+                                "ParkingFeatures.Concrete",
+                                "ParkingFeatures.Driveway",
+                                "ParkingFeatures.Attached",
+                                "ParkingFeatures.Off Street",
+                                "ParkingFeatures.Circular Driveway",
+                                "ParkingFeatures.Assigned",
+                                "ParkingFeatures.Parking Lot",
+                                "ParkingFeatures.On Street",
+                                "ParkingFeatures.Basement",
+                                "ParkingFeatures.None",
+                                "ParkingFeatures.Garage Door Opener",
+                                "ParkingFeatures.Garage Faces Side",
+                                "ParkingFeatures.Garage Faces Front",
+                                "ParkingFeatures.Garage Faces Rear",
+                                "ParkingFeatures.Electric Vehicle Charging Station(s)",
+                                "ParkingFeatures.Carport",
+                                "ParkingFeatures.Parking Pad",
+                                "ParkingFeatures.Gravel",
+                                "ParkingFeatures.Asphalt",
+                                "ParkingFeatures.Workshop in Garage",
+                                "ParkingFeatures.Inside Entrance",
+                                "ParkingFeatures.Detached",
+                                "ParkingFeatures.Unpaved",
+                                "ParkingFeatures.Paved",
+                                "ParkingFeatures.Shared Driveway",
+                                "ParkingFeatures.Additional Parking",
+                                "ParkingFeatures.Other",
+                                "ParkingFeatures.Lighted",
+                                "ParkingFeatures.Kitchen Level",
+                                "ParkingFeatures.Oversized",
+                                "ParkingFeatures.Private",
+                                "ParkingFeatures.Common",
+                                "ParkingFeatures.Guest",
+                                "ParkingFeatures.Secured",
+                                "ParkingFeatures.Deeded",
+                                "ParkingFeatures.On Site",
+                                "ParkingFeatures.Storage",
+                                "ParkingFeatures.Attached Carport",
+                                "ParkingFeatures.Alley Access",
+                                "ParkingFeatures.No Garage",
+                                "ParkingFeatures.Deck",
+                                "ParkingFeatures.Drive Through",
+                                "ParkingFeatures.Detached Carport",
+                                "GarageSpaces",
+                                "PropertyClass",
+                                "PropertySubType",
+                                "YearBuilt",
+                                "MlsStatus",
+                                "ListPrice"
+                            ]
+                        },
+                        "operator": {
+                            "type": "string",
+                            "description": "The operator to use for filtering.",
+                            "enum": [
+                                ":=",
+                                ":!=",
+                                ":",
+                                ":>",
+                                ":<",
+                                ":>=",
+                                ":<=",
+                                ":=true",
+                                ":=false"
+                            ]
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "The value to filter by. This must match the type of the field specified in 'fieldName'."
+                        }
+                    },
+                    "additionalProperties": False,
+                    "required": ["fieldName", "operator", "value"]
+                },
+                "strict": True
+            }
+        }
+
+        system_prompt = (
+            "You convert natural-language filter requests into a strict JSON matching the filter_search function schema. "
+            "Output ONLY the function arguments JSON. Do not add extra keys. "
+            "Field selection: Choose fieldName strictly from the enum; never invent fields. "
+            "Numeric interpretation for fields [BedsTotal, BathroomsTotalDecimal, GarageSpaces, LotSizeAcres, AboveGradeFinishedArea, YearBuilt, ListPrice]: "
+            "- 'at least N', 'N+', 'N or more' => operator :>= and value N. "
+            "- 'more than N' => operator :> and value N. "
+            "- 'at most N', 'up to N', 'N or less' => operator :<= and value N. "
+            "- 'less than N' => operator :< and value N. "
+            "- 'exactly N' or 'N <field>' with no qualifier => operator := and value N. "
+            "Formatting: value must be a plain number string with no commas, units, or words. Use integers for integer fields; decimals only when appropriate (BathroomsTotalDecimal or lot size decimals). "
+            "Strictness: Never loosen constraints. If the user asks for 4+ bedrooms, do not return any operator/value that could include 3. "
+            "Examples: "
+            "- 'at least 4 bedrooms' => {\"fieldName\":\"BedsTotal\",\"operator\":\":>=\",\"value\":\"4\"}. "
+            "- '3 bathrooms' => {\"fieldName\":\"BathroomsTotalDecimal\",\"operator\":\":=\",\"value\":\"3\"}. "
+            "- 'priced under 500000' => {\"fieldName\":\"ListPrice\",\"operator\":\":<\",\"value\":\"500000\"}. "
+            "Adhere exactly to the filter_search schema and enums."
+        )
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": request.query}
+            ],
+            tools=[filter_search_tool],
+            tool_choice={"type": "function", "function": {"name": "filter_search"}},
+            temperature=0
+        )
+
+        choice = response.choices[0]
+        tool_calls = choice.message.tool_calls or []
+        if not tool_calls:
+            raw = choice.message.content or "{}"
+            try:
+                parsed = json.loads(clean_json(raw))
+            except Exception:
+                raise HTTPException(status_code=422, detail="Model did not return a tool call or valid JSON")
+            return JSONResponse(content=parsed)
+
+        args_text = tool_calls[0].function.arguments or "{}"
+        parsed_args = json.loads(clean_json(args_text))
+        return JSONResponse(content=parsed_args)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
