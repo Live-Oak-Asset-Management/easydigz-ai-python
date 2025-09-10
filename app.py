@@ -22,6 +22,9 @@ load_dotenv()
 
 app = FastAPI()
 
+# Safe default agent context used when none is provided
+YOUR_DEFAULT_AGENT_CONTEXT = {"agent_answers": []}
+
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -338,6 +341,541 @@ Respond in this JSON format:
         return parsed.get("score", 1.0), parsed.get("reason", "No reason provided")
     except Exception as e:
         return 1.0, f"Failed to parse reason: {str(e)}"
+
+class EzSearchRequest(BaseModel):
+    query: str
+
+@app.post("/ezSearch")
+async def ez_search(request: EzSearchRequest):
+    try:
+        client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+        property_search_tool = {
+            "type": "function",
+            "function": {
+                "name": "property_search",
+                "description": "Search for properties based on various filters",
+                "parameters": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {
+                        "address": {
+                            "type": "string",
+                            "description": "The address for the property search e.g. 1404 Willow Street, NC"
+                        },
+                        "filters": {
+                            "type": "object",
+                            "additionalProperties": False,
+                            "properties": {
+                                "minBeds": {"type": "integer", "description": "Minimum number of bedrooms "},
+                                "maxBeds": {"type": "integer", "description": "Maximum number of bedrooms"},
+                                "minBaths": {"type": "integer", "description": "Minimum number of bathrooms"},
+                                "maxBaths": {"type": "integer", "description": "Maximum number of bathrooms"},
+                                "minPrice": {"type": "integer", "description": "Minimum price"},
+                                "maxPrice": {"type": "integer", "description": "Maximum price"},
+                                "minSqft": {"type": "integer", "description": "Minimum square footage"},
+                                "maxSqft": {"type": "integer", "description": "Maximum square footage"},
+                                "propertySubType": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Single Family Residence",
+                                            "Apartment",
+                                            "Cabin",
+                                            "Condominium",
+                                            "Duplex",
+                                            "Farm",
+                                            "Manufactured On Land",
+                                            "Quadruplex",
+                                            "Ranch",
+                                            "Townhouse",
+                                            "Triplex"
+                                        ]
+                                    },
+                                    "description": "Property subtype e.g. Single family home, Quadruplex"
+                                },
+                                "poolFeatures": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Above Ground Pool",
+                                            "Hot Tub",
+                                            "In Ground Pool",
+                                            "Swimming Pool Com/Fee",
+                                            "Swim Pool/Priv",
+                                            "Swim Pool/Priv. Com",
+                                            "Heated Pool",
+                                            "Salt Water Pool",
+                                            "Indoor Pool"
+                                        ]
+                                    },
+                                    "description": "Types of pools available in the listing i.e Hot Tub. Please note 'priv' means private and 'com' means community"
+                                },
+                                "parkingFeatures": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Carport",
+                                            "Attached",
+                                            "Driveway",
+                                            "Garage",
+                                            "Garage Faces Front",
+                                            "Assigned Spaces",
+                                            "Attached",
+                                            "Covered Parking",
+                                            "Circular Drive",
+                                            "Driveway",
+                                            "Detached",
+                                            "Parking Lot",
+                                            "Street Parking",
+                                            "No Parking"
+                                        ]
+                                    },
+                                    "description": "Parking features e.g. Driveway"
+                                },
+                                "interiorFeatures": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "10Ft+ Ceiling",
+                                            "2nd Kitchen",
+                                            "9 Ft Ceiling",
+                                            "Apt/Suite",
+                                            "Automation",
+                                            "Bookshelves",
+                                            "Butler’s Pantry",
+                                            "Cable TV Available",
+                                            "Cathedral Ceiling",
+                                            "Ceiling Fan",
+                                            "Central Vac Finished",
+                                            "Central Vac Prewired",
+                                            "Coffered Ceiling",
+                                            "Distributed Audio",
+                                            "DSL Available",
+                                            "Garage Shop",
+                                            "Granite Counter Tops",
+                                            "Heated Floors",
+                                            "Intercom Finished",
+                                            "Intercom Prewired",
+                                            "Lighting Control",
+                                            "Interior Needs Repair",
+                                            "Paneling",
+                                            "Pantry",
+                                            "Plaster Wall",
+                                            "Quartz Counter Tops",
+                                            "Radon Mitigation Instld",
+                                            "Radon Mitigation Ready",
+                                            "Second Laundry",
+                                            "Security System Finished",
+                                            "Security System Prewired",
+                                            "Skylight(s)",
+                                            "Smoke Alarm",
+                                            "Solid Surface Counter Top",
+                                            "Tile Countertops",
+                                            "Tray Ceiling",
+                                            "Walk in Closet",
+                                            "Wet Bar"
+                                        ]
+                                    },
+                                    "description": "Features within the listing such as intercom and heated floors"
+                                },
+                                "accessibilityFeatures": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "36 in + Doorways",
+                                            "48 in + Doorways",
+                                            "Accessible Doors",
+                                            "Aging in Place",
+                                            "Barrier Free",
+                                            "Chair Lift",
+                                            "Elevator",
+                                            "Universal Access",
+                                            "Accessible Kitchen",
+                                            "Level Flooring",
+                                            "Levered Door",
+                                            "Main Floor Laundry",
+                                            "Near Public Transit",
+                                            "Roll Up Counters",
+                                            "Roll Windows",
+                                            "Serviced By Bus Line",
+                                            "Sliding/RotKitCab",
+                                            "Wheelchair Entry",
+                                            "Wheelchair Full Bath",
+                                            "Wheelchair Half Bath",
+                                            "Wheelchair Ramp"
+                                        ],
+                                        "description": "Accessibility features such as the ability ot have a wheelchair ramp or roll up counters"
+                                    }
+                                },
+                                "waterfrontFeatures": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Bay/Harbor",
+                                            "Beach Sandy",
+                                            "Beach Rocky",
+                                            "Beach Grassy",
+                                            "Boat House",
+                                            "Boat Slip",
+                                            "Buoy Installed",
+                                            "Buoy Permit Available",
+                                            "Buoy Permit Obtained",
+                                            "Dock Community",
+                                            "Dock Floating",
+                                            "Dock Multi – Slip",
+                                            "Dock Permit Available",
+                                            "Dock Permit Obtained",
+                                            "Dock Private Installed",
+                                            "Dock Shared",
+                                            "Dock Single Slip",
+                                            "No Motor watercraft",
+                                            "On Cove",
+                                            "Pier",
+                                            "Public Boat Ramp < 1 mile",
+                                            "Publ. Boat Ramp 2-3 miles",
+                                            "Swimming not permitted",
+                                            "Water Front",
+                                            "Water View"
+                                        ],
+                                        "description": "Waterfront charateristics of the listing"
+                                    }
+                                },
+                                "waterSewer": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "City Sewer",
+                                            "City Water",
+                                            "Community Sewer",
+                                            "Community Water",
+                                            "County Sewer",
+                                            "County Water",
+                                            "Public",
+                                            "Sand Filter",
+                                            "Septic Tank",
+                                            "Well",
+                                            "No Water/Sewer"
+                                        ],
+                                        "description": "Water and sewer features of the listing"
+                                    }
+                                },
+                                "minLotSize": {"type": "integer", "description": "Minimum lot size, always return the value in acers, i.e 0.1"},
+                                "maxLotSize": {"type": "integer", "description": "Maximum lot size, always return value in acers, i.e 0.1"},
+                                "minGarageSpaces": {"type": "integer", "description": "Minimum number of garage spaces"},
+                                "maxGarageSpaces": {"type": "integer", "description": "Maximum number of garage spaces"},
+                                "features": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "description": "List of desired features e.g. backyard"
+                                }
+                            },
+                            "required": [
+                                "minBeds",
+                                "maxBeds",
+                                "minBaths",
+                                "maxBaths",
+                                "minPrice",
+                                "maxPrice",
+                                "minSqft",
+                                "maxSqft",
+                                "propertySubType",
+                                "poolFeatures",
+                                "parkingFeatures",
+                                "interiorFeatures",
+                                "accessibilityFeatures",
+                                "waterfrontFeatures",
+                                "waterSewer",
+                                "minLotSize",
+                                "maxLotSize",
+                                "minGarageSpaces",
+                                "maxGarageSpaces",
+                                "features"
+                            ]
+                        }
+                    },
+                    "required": ["address", "filters"]
+                },
+                "strict": True
+            }
+        }
+
+        system_prompt = (
+            "You convert natural-language house search requests into a strict JSON matching the property_search function schema. "
+            "Rules: "
+            "1) Always return ONLY the function arguments JSON, valid per the schema. "
+            "2) Do NOT fabricate values. Infer only from the user's input or use safe defaults described below. "
+            "3) Address handling: If the user provides a location (address, city, neighborhood, ZIP, state), set address to that string. "
+            "If NO location is given, set address to an empty string (\"\"). Never invent or use example addresses. "
+            "4) When the user specifies exact counts (e.g., \"6 bedroom\"), set minBeds and maxBeds to that same value. Likewise for bathrooms and garage spaces. "
+            "5) **STRICTLY:** Do not use any default values. unless the user explicitly asks for it."
+            "6) Map style/type words to the closest propertySubType enum. Examples: single family -> Single Family Residence; ranch -> Ranch; condo -> Condominium; townhouse -> Townhouse; apartment -> Apartment; duplex -> Duplex; triplex -> Triplex; quadruplex -> Quadruplex; cabin -> Cabin; farm -> Farm; manufactured -> Manufactured On Land. "
+            "7) Pools: if user asks for a pool, choose an appropriate poolFeatures value (e.g., \"In Ground Pool\" if unspecified). If no pool mentioned, return an empty array. "
+            "8) Parking/garage: map \"parking\" or \"garage\" counts to minGarageSpaces/maxGarageSpaces. For parking features like driveway/garage/carport, add to parkingFeatures if explicitly mentioned. Otherwise leave empty. "
+            "9) Interior/accessibility/waterfront/waterSewer/features: include only if clearly requested; otherwise return empty arrays. "
+            "10) Never add fields outside the schema; adhere to enums exactly. "
+            "13) DO not use any default values. unless the user explicitly asks for it."
+            "12) Always return a valid JSON which is part of the property_search function added as OPEN API specification. "
+            "13)Stick always to the response from property_search function only!"
+        )
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": request.query}
+            ],
+            tools=[property_search_tool],
+            tool_choice={"type": "function", "function": {"name": "property_search"}},
+            temperature=0
+        )
+
+        choice = response.choices[0]
+        tool_calls = choice.message.tool_calls or []
+        if not tool_calls:
+            # Fallback: try to parse raw content as JSON
+            raw = choice.message.content or "{}"
+            try:
+                parsed = json.loads(clean_json(raw))
+            except Exception:
+                raise HTTPException(status_code=422, detail="Model did not return a tool call or valid JSON")
+            return JSONResponse(content=parsed)
+
+        # Extract the first tool call arguments
+        args_text = tool_calls[0].function.arguments or "{}"
+        parsed_args = json.loads(clean_json(args_text))
+        return JSONResponse(content=parsed_args)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class FilterSearchRequest(BaseModel):
+    query: str
+
+@app.post("/filterSearch")
+async def filter_search_endpoint(request: FilterSearchRequest):
+    try:
+        client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+        field_enum = [
+            "AboveGradeFinishedArea",
+            "GarageSpaces",
+            "LotSizeAcres",
+            "BedsTotal",
+            "PublicRemarks",
+            "PostalCode",
+            "UnparsedAddress",
+            "BathroomsTotalDecimal",
+            "HighSchool",
+            "MiddleOrJuniorSchool",
+            "ElementarySchool",
+            "HorseAmenities.Other",
+            "WaterfrontFeatures.Creek",
+            "WaterfrontFeatures.Stream",
+            "WaterfrontFeatures.Lake",
+            "WaterfrontFeatures.River Front",
+            "WaterfrontFeatures.Beach Access",
+            "WaterfrontFeatures.Canal Front",
+            "WaterfrontFeatures.Ocean Front",
+            "ArchitecturalStyle.Bungalow",
+            "ArchitecturalStyle.A-Frame",
+            "ArchitecturalStyle.Contemporary",
+            "ArchitecturalStyle.Williamsburg",
+            "ArchitecturalStyle.Cape Cod",
+            "ArchitecturalStyle.Farm House",
+            "ArchitecturalStyle.Colonial",
+            "ArchitecturalStyle.Warehouse",
+            "ArchitecturalStyle.Georgian",
+            "ArchitecturalStyle.Tudor",
+            "ArchitecturalStyle.Spanish",
+            "ArchitecturalStyle.Victorian",
+            "ArchitecturalStyle.Rustic",
+            "ArchitecturalStyle.Craftsman",
+            "ArchitecturalStyle.Deck House",
+            "ArchitecturalStyle.Log Home",
+            "ArchitecturalStyle.French Province",
+            "ArchitecturalStyle.Charleston",
+            "ArchitecturalStyle.Modernist",
+            "ArchitecturalStyle.Cottage",
+            "ArchitecturalStyle.Geodesic",
+            "ArchitecturalStyle.National Historic Designation",
+            "ArchitecturalStyle.Local Historic Designation",
+            "ArchitecturalStyle.State Historic Designation",
+            "ArchitecturalStyle.Log",
+            "PoolFeatures.Private",
+            "PoolFeatures.Swimming Pool Com/Fee",
+            "PoolFeatures.None",
+            "PoolFeatures.Association",
+            "PoolFeatures.Fenced",
+            "PoolFeatures.Above Ground",
+            "PoolFeatures.Tile",
+            "PoolFeatures.Outdoor Pool",
+            "PoolFeatures.Pool/Spa Combo",
+            "PoolFeatures.Gunite",
+            "PoolFeatures.Filtered",
+            "PoolFeatures.Gas Heat",
+            "PoolFeatures.Indoor",
+            "PoolFeatures.Waterfall",
+            "ParkingFeatures.Garage",
+            "ParkingFeatures.Covered",
+            "ParkingFeatures.Concrete",
+            "ParkingFeatures.Driveway",
+            "ParkingFeatures.Attached",
+            "ParkingFeatures.Off Street",
+            "ParkingFeatures.Circular Driveway",
+            "ParkingFeatures.Assigned",
+            "ParkingFeatures.Parking Lot",
+            "ParkingFeatures.On Street",
+            "ParkingFeatures.Basement",
+            "ParkingFeatures.None",
+            "ParkingFeatures.Garage Door Opener",
+            "ParkingFeatures.Garage Faces Side",
+            "ParkingFeatures.Garage Faces Front",
+            "ParkingFeatures.Garage Faces Rear",
+            "ParkingFeatures.Electric Vehicle Charging Station(s)",
+            "ParkingFeatures.Carport",
+            "ParkingFeatures.Parking Pad",
+            "ParkingFeatures.Gravel",
+            "ParkingFeatures.Asphalt",
+            "ParkingFeatures.Workshop in Garage",
+            "ParkingFeatures.Inside Entrance",
+            "ParkingFeatures.Detached",
+            "ParkingFeatures.Unpaved",
+            "ParkingFeatures.Paved",
+            "ParkingFeatures.Shared Driveway",
+            "ParkingFeatures.Additional Parking",
+            "ParkingFeatures.Other",
+            "ParkingFeatures.Lighted",
+            "ParkingFeatures.Kitchen Level",
+            "ParkingFeatures.Oversized",
+            "ParkingFeatures.Private",
+            "ParkingFeatures.Common",
+            "ParkingFeatures.Guest",
+            "ParkingFeatures.Secured",
+            "ParkingFeatures.Deeded",
+            "ParkingFeatures.On Site",
+            "ParkingFeatures.Storage",
+            "ParkingFeatures.Attached Carport",
+            "ParkingFeatures.Alley Access",
+            "ParkingFeatures.No Garage",
+            "ParkingFeatures.Deck",
+            "ParkingFeatures.Drive Through",
+            "ParkingFeatures.Detached Carport",
+            "PropertyClass",
+            "PropertySubType",
+            "YearBuilt",
+            "MlsStatus",
+            "ListPrice"
+        ]
+
+        filter_search_tool = {
+            "type": "function",
+            "function": {
+                "name": "filter_search",
+                "description": "Perform a filter-based search using an array of filter objects",
+                "parameters": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {
+                        "filters": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": False,
+                                "properties": {
+                                    "fieldName": {
+                                        "type": "string",
+                                        "enum": field_enum,
+                                        "description": "Field to filter on"
+                                    },
+                                    "operator": {
+                                        "type": "string",
+                                        "enum": [":=", ":!=", ":", ":>", ":<", ":>=", ":<=", ":=true", ":=false"],
+                                        "description": "Filter operator"
+                                    },
+                                    "value": {
+                                        "type": "string",
+                                        "description": "Value to compare against"
+                                    }
+                                },
+                                "required": ["fieldName", "operator", "value"]
+                            }
+                        }
+                    },
+                    "required": ["filters"]
+                },
+                "strict": True
+            }
+        }
+
+        system_prompt = (
+            "You convert natural-language filter requests into the function schema with an array 'filters' of filter objects. "
+            "Output ONLY the function arguments JSON with a top-level 'filters' array. Do not add extra keys. "
+            "Each filter object must have fieldName (from enum), operator (from enum), and value (string). "
+            "If multiple constraints are present (type, pool, price, location), include multiple filter objects. "
+            "Numeric rules for [BedsTotal, BathroomsTotalDecimal, GarageSpaces, LotSizeAcres, AboveGradeFinishedArea, YearBuilt, ListPrice]: "
+            "- 'at least N' => :>= N; 'more than N' => :> N; 'at most N' => :<= N; 'less than N' => :< N; 'exactly N' => := N. "
+            "Formatting: value is a plain number string (no commas/units) for numeric fields. "
+            "Location mapping: if a city or place is mentioned (e.g., Raleigh), add a filter {fieldName:'UnparsedAddress', operator:':', value:'Raleigh'}. "
+            "Property type mapping: 'single family' => PropertySubType := 'Single Family Residence'. "
+            "Pool present: map to an appropriate PoolFeatures.* enum; when generic just use 'PoolFeatures.Private'. "
+            "Return a compact array in the 'filters' field only."
+        )
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": request.query}
+            ],
+            tools=[filter_search_tool],
+            tool_choice={"type": "function", "function": {"name": "filter_search"}},
+            temperature=0
+        )
+
+        choice = response.choices[0]
+        tool_calls = choice.message.tool_calls or []
+        if not tool_calls:
+            raw = choice.message.content or "{}"
+            try:
+                parsed = json.loads(clean_json(raw))
+            except Exception:
+                raise HTTPException(status_code=422, detail="Model did not return a tool call or valid JSON")
+            # Normalize to filters array
+            if isinstance(parsed, dict) and "filters" in parsed:
+                filters = parsed["filters"]
+            elif isinstance(parsed, list):
+                filters = parsed
+            elif isinstance(parsed, dict) and {"fieldName","operator","value"}.issubset(parsed.keys()):
+                filters = [parsed]
+            else:
+                filters = []
+            return JSONResponse(content=filters)
+
+        args_text = tool_calls[0].function.arguments or "{}"
+        parsed_args = json.loads(clean_json(args_text))
+        # Normalize to filters array
+        if isinstance(parsed_args, dict) and "filters" in parsed_args:
+            filters = parsed_args["filters"]
+        elif isinstance(parsed_args, list):
+            filters = parsed_args
+        elif isinstance(parsed_args, dict) and {"fieldName","operator","value"}.issubset(parsed_args.keys()):
+            filters = [parsed_args]
+        else:
+            filters = []
+        return JSONResponse(content=filters)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn

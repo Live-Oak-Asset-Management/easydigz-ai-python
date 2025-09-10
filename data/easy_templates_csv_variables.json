@@ -157,7 +157,7 @@
     "_id": { "$oid": "64678cd0d8c7eb6f388fd071" },
     "name": "EASYDIGZ | Opportunity Updated - Stage Created",
     "stage": "Opportunity-Created",
-    "template": "Hello {{accountName}},\n<br><br>\nThank you for creating your account at EasyDigz.com. Have fun on the site and remember to reach out to us if you have any questions. \n<br><br><br>\n<b>EasyDigz Team</b><br>\n919-275-5868<br>\n<a href =\"mailto:support@EasyDigz.com\">support@EasyDigz.com</a><br>",
+    "template": "Hello {{accountName}},\n\nYour new opportunity has been successfully created for the property located at {{propertyAddress}}.\n\n<b>Opportunity Details:</b>\nProperty: {{propertyName}}\nType: {{propertyType}}\nBudget: {{budget}}\nStatus: {{status}}\nYou can view or manage this opportunity by logging into your account: <!-- IMPORTANT: Do not prepend any extra text like 'View Opportunity' before this link -->\n<a href=\"https://{{agentId}}.easydigz.com/admin/opportunities/{{id}}\">View Opportunity Details</a> \n\nIf you have any questions or need assistance, feel free to contact us.\n\nThank you,<br>\n<b>EasyDigz Team</b>",
     "variable_input_schema": [
       {
         "type": "string",
@@ -167,10 +167,46 @@
       },
       {
         "type": "string",
-        "title": "propertyStreetAddress",
-        "description": "This is the full street address of the property",
+        "title": "propertyAddress",
+        "description": "This is the full property address",
         "required": false
-      }
+      },
+      {
+        "type": "string",
+        "title": "propertyName",
+        "description": "This is the property name or address",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "propertyType",
+        "description": "This is the type of property (e.g., Apartment, Villa, Condo)",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "budget",
+        "description": "This is the budget if applicable",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "status",
+        "description": "This is the current status of the opportunity",
+        "required": false
+      },
+      {
+        "type": "string",
+        "title": "agentId",
+        "description": "This is the agent's unique ID used to generate the opportunity link",
+        "required": true
+      },
+      {
+        "type": "string",
+        "title": "id",
+        "description": "This is the unique opportunity ID",
+        "required": true
+      } 
     ]
   },
   {
@@ -316,14 +352,38 @@
     "_id": { "$oid": "64678e73d8c7eb6f388fd072" },
     "name": "EASYDIGZ | Opportunity Successful",
     "stage": "Opportunity-Successful Lead Creation",
-    "template": "For: {{accountName}}<br><br>Dear {{accountName}},<br><br>We are thrilled to share an exciting opportunity with you! As our EasyDigz team serving the vibrant communities of Raleigh and Cary, we specialize in luxury homes and first-time homebuyer experiences. Our commitment to excellence is reflected in our use of cutting-edge technology, including virtual tours and 3D walkthroughs, ensuring you have a comprehensive view of your potential new home.<br><br>With five years of experience and our Accredited Buyer Representative certification, we leverage data-driven insights to guide you through every step of the real estate journey. Our bilingual services ensure that we can connect with a diverse range of clients, making the process as smooth and enjoyable as possible.<br><br>We invite you to explore this opportunity further: <a href=\"https://{{agentId}}.easydigz.com/admin/opportunities/{{id}}\">View Opportunity</a><br><br>We are here to support you and want you to feel confident in your decisions. If you have any questions or need assistance, please don’t hesitate to reach out to us at 9999999999 or via email at easy@gmail.com.<br><br>Warm regards,<br><br>The EasyDigz Team<br>sea plot, Mumbai, 400065, USA",
+    "template": "Dear {{accountName}},<br>A new opportunity has been successfully created in your account. Please review the details and connect with the client promptly.<br>Opportunity Details:<br>Name: {{OpportunityName}}<br>Created On: {{Date}}<br>You can view and manage this opportunity here:<br><!-- IMPORTANT: Do not prepend any extra text like 'View Opportunity' before this link -->\n<a href=\"https://{{agentId}}.easydigz.com/admin/opportunities/{{id}}\">View Opportunity Details</a><br>Thank you<br>Best regards,<br>The EasyDigz Team",
     "variable_input_schema": [
       {
         "type": "string",
         "title": "accountName",
         "description": "This is the client's name",
         "required": false
-      }
+      },
+      {
+        "type": "string",
+        "title": "OpportunityName",
+        "description": "This is the name of the opportunity",
+        "required": true
+      },
+      {
+        "type": "string",
+        "title": "Date",
+        "description": "This is the date when the opportunity was created",
+        "required": true
+      },
+      {
+        "type": "string",
+        "title": "agentId",
+        "description": "This is the agent's unique ID used to generate the opportunity link",
+        "required": true
+      },
+      {
+        "type": "string",
+        "title": "id",
+        "description": "This is the unique opportunity ID",
+        "required": true
+      }    
     ]
   }
 ]
