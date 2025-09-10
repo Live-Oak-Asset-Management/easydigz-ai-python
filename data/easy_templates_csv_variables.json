@@ -157,7 +157,7 @@
     "_id": { "$oid": "64678cd0d8c7eb6f388fd071" },
     "name": "EASYDIGZ | Opportunity Updated - Stage Created",
     "stage": "Opportunity-Created",
-    "template": "Hello {{accountName}},\n\nYour new opportunity has been successfully created for the property located at {{propertyAddress}}.\n\n<b>Opportunity Details:</b>\nProperty: {{propertyName}}\nType: {{propertyType}}\nBudget: {{budget}}\nStatus: {{status}}\nYou can view or manage this opportunity by logging into your account: <!-- IMPORTANT: Do not prepend any extra text like 'View Opportunity' before this link -->\n<a href=\"https://{{agentId}}.easydigz.com/admin/opportunities/{{id}}\">View Opportunity Details</a> \n\nIf you have any questions or need assistance, feel free to contact us.\n\nThank you,<br>\n<b>EasyDigz Team</b>",
+    "template": "Hello {{accountName}},\n\nYour new opportunity has been successfully created for the property located at {{propertyAddress}}.\n\nOpportunity Details:\nProperty: {{propertyName}}\nType: {{propertyType}}\nBudget: {{budget}}\nStatus: {{status}}\n\nIf you have any questions or need assistance, feel free to contact us.\n\nThank you,<br>\n<b>EasyDigz Team</b>",
     "variable_input_schema": [
       {
         "type": "string",
@@ -194,19 +194,7 @@
         "title": "status",
         "description": "This is the current status of the opportunity",
         "required": false
-      },
-      {
-        "type": "string",
-        "title": "agentId",
-        "description": "This is the agent's unique ID used to generate the opportunity link",
-        "required": true
-      },
-      {
-        "type": "string",
-        "title": "id",
-        "description": "This is the unique opportunity ID",
-        "required": true
-      } 
+      }
     ]
   },
   {
