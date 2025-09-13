@@ -340,7 +340,7 @@
     "_id": { "$oid": "64678e73d8c7eb6f388fd072" },
     "name": "EASYDIGZ | Opportunity Successful",
     "stage": "Opportunity-Successful Lead Creation",
-    "template": "Dear {{accountName}},<br>A new opportunity has been successfully created in your account. Please review the details and connect with the client promptly.<br>Opportunity Details:<br>Name: {{OpportunityName}}<br>Created On: {{Date}}<br>You can view and manage this opportunity here:<br><!-- IMPORTANT: Do not prepend any extra text like 'View Opportunity' before this link -->\n<a href=\"https://{{agentId}}.easydigz.com/admin/opportunities/{{id}}\">View Opportunity Details</a><br>Thank you<br>Best regards,<br>The EasyDigz Team",
+    "template": "Dear {{accountName}},<br>A new opportunity has been successfully created in your account. Please review the details and connect with the client promptly.<br>Opportunity Details:<br>Name: {{OpportunityName}}<br>Created On: {{Date}}<br><br>\nYou can view and manage this opportunity here:<br><!-- IMPORTANT: Do not prepend any extra text like 'View Opportunity' before this link -->\n<a href=\"https://{{agentId}}.easydigz.com/admin/opportunities/{{id}}\">View Opportunity Details</a><br>Thank you<br>Best regards,<br>The EasyDigz Team",
     "variable_input_schema": [
       {
         "type": "string",
