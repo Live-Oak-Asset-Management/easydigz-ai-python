@@ -673,7 +673,7 @@ async def filter_search_endpoint(request: FilterSearchRequest):
             "PublicRemarks",
             "PostalCode",
             "UnparsedAddress",
-            "BathroomsTotalDecimal",
+            "BathroomsTotalInteger",
             "HighSchool",
             "MiddleOrJuniorSchool",
             "ElementarySchool",
@@ -821,7 +821,7 @@ async def filter_search_endpoint(request: FilterSearchRequest):
             "Output ONLY the function arguments JSON with a top-level 'filters' array. Do not add extra keys. "
             "Each filter object must have fieldName (from enum), operator (from enum), and value (string). "
             "If multiple constraints are present (type, pool, price, location), include multiple filter objects. "
-            "Numeric rules for [BedsTotal, BathroomsTotalDecimal, GarageSpaces, LotSizeAcres, AboveGradeFinishedArea, YearBuilt, ListPrice]: "
+            "Numeric rules for [BedsTotal, BathroomsTotalInteger, GarageSpaces, LotSizeAcres, AboveGradeFinishedArea, YearBuilt, ListPrice]: "
             "- 'at least N' => :>= N; 'more than N' => :> N; 'at most N' => :<= N; 'less than N' => :< N; 'exactly N' => := N. "
             "Formatting: value is a plain number string (no commas/units) for numeric fields. "
             "Location mapping: if a city or place is mentioned (e.g., Raleigh), add a filter {fieldName:'UnparsedAddress', operator:':', value:'Raleigh'}. "
